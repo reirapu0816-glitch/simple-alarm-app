@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Alarm App</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Simple Alarm</h1>
+
+        <div class="current-time" id="currentTime">00:00:00</div>
+
+        <div class="alarm-section">
+            <div class="alarm-label">Alarm Time</div>
+            <div class="time-inputs">
+                <input type="number" id="hourInput" min="0" max="23" placeholder="HH">
+                <span class="colon">:</span>
+                <input type="number" id="minuteInput" min="0" max="59" placeholder="MM">
+            </div>
+
+            <div class="toggle-section">
+                <label class="toggle-label">
+                    <input type="checkbox" id="alarmToggle">
+                    <span class="toggle-slider"></span>
+                </label>
+                <span class="alarm-status" id="alarmStatus">Off</span>
+            </div>
+
+            <button class="stop-button" id="stopButton" style="display: none;">Stop Alarm</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
