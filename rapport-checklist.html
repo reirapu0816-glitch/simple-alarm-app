@@ -1,0 +1,1901 @@
+<title>ラポール指標 — デザインメンター育成ガイド</title>
+<style>
+/* ── Token layer ── */
+:root {
+  --bg:        #F8FAFC;
+  --bg-card:   #FFFFFF;
+  --bg-sub:    #EFF4FB;
+  --border:    #CBD5E1;
+  --text:      #0F172A;
+  --text-muted:#64748B;
+  --nav-bg:    #1B2B4B;
+  --nav-text:  #E2E8F0;
+  --accent:    #2563EB;
+  --accent-lt: #DBEAFE;
+  --ok:        #16A34A;
+  --ok-lt:     #DCFCE7;
+  --ng:        #DC2626;
+  --ng-lt:     #FEE2E2;
+  --warn:      #D97706;
+  --warn-lt:   #FEF3C7;
+  --step1:     #7C3AED;
+  --step1-lt:  #EDE9FE;
+  --step2:     #0891B2;
+  --step2-lt:  #CFFAFE;
+  --step3:     #059669;
+  --step3-lt:  #D1FAE5;
+  --step4:     #DC2626;
+  --step4-lt:  #FEE2E2;
+  --step5:     #D97706;
+  --step5-lt:  #FEF3C7;
+  --type-bg:   #F1F5F9;
+  --shadow:    0 1px 3px rgba(0,0,0,.1), 0 1px 2px rgba(0,0,0,.06);
+  --radius:    10px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg:        #0A0F1A;
+    --bg-card:   #131C2F;
+    --bg-sub:    #1A2540;
+    --border:    #2D3D5C;
+    --text:      #E2E8F0;
+    --text-muted:#94A3B8;
+    --nav-bg:    #0A0F1A;
+    --nav-text:  #CBD5E1;
+    --accent:    #60A5FA;
+    --accent-lt: #1E3A5F;
+    --ok:        #4ADE80;
+    --ok-lt:     #14532D;
+    --ng:        #F87171;
+    --ng-lt:     #7F1D1D;
+    --warn:      #FCD34D;
+    --warn-lt:   #78350F;
+    --step1:     #A78BFA;
+    --step1-lt:  #2E1065;
+    --step2:     #22D3EE;
+    --step2-lt:  #0C4A6E;
+    --step3:     #34D399;
+    --step3-lt:  #064E3B;
+    --step4:     #F87171;
+    --step4-lt:  #7F1D1D;
+    --step5:     #FCD34D;
+    --step5-lt:  #78350F;
+    --type-bg:   #1A2540;
+    --shadow:    0 1px 3px rgba(0,0,0,.4);
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg:        #0A0F1A;
+  --bg-card:   #131C2F;
+  --bg-sub:    #1A2540;
+  --border:    #2D3D5C;
+  --text:      #E2E8F0;
+  --text-muted:#94A3B8;
+  --nav-bg:    #0A0F1A;
+  --nav-text:  #CBD5E1;
+  --accent:    #60A5FA;
+  --accent-lt: #1E3A5F;
+  --ok:        #4ADE80;
+  --ok-lt:     #14532D;
+  --ng:        #F87171;
+  --ng-lt:     #7F1D1D;
+  --warn:      #FCD34D;
+  --warn-lt:   #78350F;
+  --step1:     #A78BFA;
+  --step1-lt:  #2E1065;
+  --step2:     #22D3EE;
+  --step2-lt:  #0C4A6E;
+  --step3:     #34D399;
+  --step3-lt:  #064E3B;
+  --step4:     #F87171;
+  --step4-lt:  #7F1D1D;
+  --step5:     #FCD34D;
+  --step5-lt:  #78350F;
+  --type-bg:   #1A2540;
+  --shadow:    0 1px 3px rgba(0,0,0,.4);
+}
+
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; scroll-behavior: smooth; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Noto Sans JP", "Yu Gothic UI", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+}
+
+/* ── Layout ── */
+.page-wrap {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  min-height: 100vh;
+}
+
+/* ── Sidebar nav ── */
+.sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  background: var(--nav-bg);
+  color: var(--nav-text);
+  padding: 24px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,.2) transparent;
+}
+.sidebar-logo {
+  padding: 0 20px 20px;
+  border-bottom: 1px solid rgba(255,255,255,.1);
+  margin-bottom: 12px;
+}
+.sidebar-logo .logo-label {
+  font-size: .65rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  opacity: .5;
+  margin-bottom: 4px;
+}
+.sidebar-logo .logo-title {
+  font-size: .95rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+.nav-section {
+  padding: 8px 20px 4px;
+  font-size: .6rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  opacity: .4;
+}
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 20px;
+  font-size: .83rem;
+  color: var(--nav-text);
+  text-decoration: none;
+  opacity: .7;
+  border-left: 3px solid transparent;
+  transition: opacity .15s, border-color .15s, background .15s;
+}
+.nav-link:hover, .nav-link.active {
+  opacity: 1;
+  background: rgba(255,255,255,.07);
+  border-left-color: var(--accent);
+}
+.nav-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ── Main content ── */
+main {
+  padding: 40px 48px;
+  max-width: 900px;
+}
+
+/* ── Hero ── */
+.hero {
+  margin-bottom: 48px;
+  padding-bottom: 32px;
+  border-bottom: 1px solid var(--border);
+}
+.hero-eyebrow {
+  font-size: .7rem;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+.hero h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1.2;
+  color: var(--text);
+  margin-bottom: 16px;
+}
+.hero-sub {
+  font-size: 1rem;
+  color: var(--text-muted);
+  max-width: 540px;
+}
+.hero-meta {
+  margin-top: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: .73rem;
+  font-weight: 600;
+  background: var(--bg-sub);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+}
+
+/* ── Definition box ── */
+.def-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 24px 28px;
+  margin-bottom: 40px;
+  box-shadow: var(--shadow);
+}
+.def-box .def-word {
+  font-size: .7rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.def-box .def-main {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+.def-box .def-sub {
+  font-size: .88rem;
+  color: var(--text-muted);
+}
+.role-compare {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+  margin-top: 20px;
+}
+.role-card {
+  background: var(--bg-sub);
+  border-radius: 8px;
+  padding: 14px 16px;
+  text-align: center;
+  border: 1px solid var(--border);
+}
+.role-card .role-label {
+  font-size: .7rem;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.role-card.ng .role-label { color: var(--ng); }
+.role-card.ng { border-top: 2px solid var(--ng); }
+.role-card.ok .role-label { color: var(--ok); }
+.role-card.ok { border-top: 3px solid var(--ok); }
+.role-card .role-name { font-size: .95rem; font-weight: 800; margin-bottom: 4px; }
+.role-card .role-desc { font-size: .75rem; color: var(--text-muted); line-height: 1.4; }
+
+/* ── Sections ── */
+.section { margin-bottom: 52px; }
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+.step-num {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .75rem;
+  font-weight: 800;
+  letter-spacing: .05em;
+  flex-shrink: 0;
+}
+.section-header h2 {
+  font-size: 1.35rem;
+  font-weight: 800;
+}
+.section-header p {
+  font-size: .83rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+/* Step color variants */
+.s1 .step-num { background: var(--step1-lt); color: var(--step1); }
+.s2 .step-num { background: var(--step2-lt); color: var(--step2); }
+.s3 .step-num { background: var(--step3-lt); color: var(--step3); }
+.s4 .step-num { background: var(--step4-lt); color: var(--step4); }
+.s5 .step-num { background: var(--step5-lt); color: var(--step5); }
+.st .step-num { background: var(--accent-lt); color: var(--accent); }
+
+/* ── Cards ── */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow);
+}
+.card-title {
+  font-size: .85rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.card-title .icon {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .7rem;
+}
+
+/* ── Checklist items ── */
+.check-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  list-style: none;
+}
+.check-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.check-item input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  margin-top: 3px;
+  flex-shrink: 0;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+.check-item label {
+  font-size: .87rem;
+  cursor: pointer;
+  line-height: 1.55;
+}
+.check-item input:checked + label {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+.sub-note {
+  font-size: .75rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+  padding-left: 26px;
+}
+
+/* ── Risk categories ── */
+.risk-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.risk-card {
+  background: var(--ng-lt);
+  border: 1px solid color-mix(in srgb, var(--ng) 30%, transparent);
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+.risk-card .risk-cat {
+  font-size: .72rem;
+  font-weight: 700;
+  color: var(--ng);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  margin-bottom: 4px;
+}
+.risk-card .risk-name {
+  font-size: .88rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.risk-card .risk-kw {
+  font-size: .73rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+.risk-kw span {
+  display: inline-block;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1px 5px;
+  margin: 1px 2px;
+}
+
+/* ── IEAR grid ── */
+.iear-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.iear-card {
+  background: var(--accent-lt);
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+  border-radius: 8px;
+  padding: 14px 12px;
+  text-align: center;
+}
+.iear-en {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--accent);
+  margin-bottom: 2px;
+}
+.iear-jp {
+  font-size: .78rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.iear-desc {
+  font-size: .68rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+/* ── 5-principle rows ── */
+.principle-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.principle-item {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+.principle-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--bg-sub);
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  user-select: none;
+}
+.principle-num {
+  width: 26px;
+  height: 26px;
+  background: var(--step2-lt);
+  color: var(--step2);
+  border-radius: 6px;
+  font-size: .75rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.principle-title {
+  font-size: .9rem;
+  font-weight: 700;
+  flex: 1;
+}
+.principle-toggle {
+  font-size: .8rem;
+  color: var(--text-muted);
+  transition: transform .2s;
+}
+.principle-body {
+  padding: 14px 16px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.ng-ex, .ok-ex {
+  border-radius: 6px;
+  padding: 10px 12px;
+}
+.ng-ex { background: var(--ng-lt); border-left: 3px solid var(--ng); }
+.ok-ex { background: var(--ok-lt); border-left: 3px solid var(--ok); }
+.ex-label {
+  font-size: .65rem;
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.ng-ex .ex-label { color: var(--ng); }
+.ok-ex .ex-label { color: var(--ok); }
+.ex-text {
+  font-size: .78rem;
+  line-height: 1.55;
+  font-style: italic;
+}
+
+/* ── Pyramid ── */
+.pyramid-wrap {
+  margin: 16px 0;
+}
+.pyramid-layer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 6px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+}
+.pyramid-layer.mind { border-left: 4px solid var(--step1); }
+.pyramid-layer.resource { border-left: 4px solid var(--step2); }
+.pyramid-layer.means { border-left: 4px solid var(--step3); }
+.pyramid-layer.goal { border-left: 4px solid var(--step5); }
+.layer-tag {
+  font-size: .68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  min-width: 64px;
+}
+.mind .layer-tag { color: var(--step1); }
+.resource .layer-tag { color: var(--step2); }
+.means .layer-tag { color: var(--step3); }
+.goal .layer-tag { color: var(--step5); }
+.layer-content { flex: 1; }
+.layer-content strong { font-size: .88rem; }
+.layer-content p { font-size: .75rem; color: var(--text-muted); margin-top: 2px; }
+.layer-q {
+  font-size: .75rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* ── Pitfall cards ── */
+.pitfall-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.pitfall-item {
+  display: flex;
+  gap: 14px;
+  background: var(--ng-lt);
+  border: 1px solid color-mix(in srgb, var(--ng) 25%, transparent);
+  border-radius: 8px;
+  padding: 14px 16px;
+}
+.pitfall-icon {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.pitfall-name {
+  font-size: .88rem;
+  font-weight: 700;
+  color: var(--ng);
+  margin-bottom: 4px;
+}
+.pitfall-desc {
+  font-size: .78rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+.pitfall-fix {
+  font-size: .75rem;
+  color: var(--ok);
+  margin-top: 4px;
+  font-weight: 600;
+}
+
+/* ── Success criteria ── */
+.goal-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.goal-card {
+  background: var(--ok-lt);
+  border: 1px solid color-mix(in srgb, var(--ok) 25%, transparent);
+  border-radius: 8px;
+  padding: 14px 12px;
+  text-align: center;
+}
+.goal-emoji { font-size: 1.4rem; margin-bottom: 6px; }
+.goal-label { font-size: .8rem; font-weight: 700; color: var(--ok); margin-bottom: 4px; }
+.goal-desc { font-size: .73rem; color: var(--text-muted); line-height: 1.4; }
+
+/* ── Student type cards ── */
+.type-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.type-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+.type-header {
+  padding: 12px 16px;
+  background: var(--type-bg);
+  border-bottom: 1px solid var(--border);
+}
+.type-tag {
+  font-size: .65rem;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 4px;
+}
+.type-name {
+  font-size: .95rem;
+  font-weight: 800;
+}
+.type-body {
+  padding: 14px 16px;
+}
+.type-signal {
+  font-size: .75rem;
+  background: var(--warn-lt);
+  border-radius: 4px;
+  padding: 6px 10px;
+  margin-bottom: 10px;
+  color: var(--warn);
+  font-weight: 600;
+  border-left: 3px solid var(--warn);
+}
+.type-points {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.type-points li {
+  font-size: .78rem;
+  line-height: 1.5;
+  padding-left: 14px;
+  position: relative;
+}
+.type-points li::before {
+  content: '→';
+  position: absolute;
+  left: 0;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* ── Observation axes ── */
+.axis-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.axis-card {
+  background: var(--bg-sub);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 8px;
+  text-align: center;
+}
+.axis-name {
+  font-size: .72rem;
+  font-weight: 800;
+  color: var(--step2);
+  margin-bottom: 4px;
+}
+.axis-items {
+  font-size: .65rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* ── Warning signals ── */
+.warn-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.warn-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: .82rem;
+  padding: 8px 12px;
+  background: var(--warn-lt);
+  border-radius: 6px;
+  border-left: 3px solid var(--warn);
+}
+.warn-item::before {
+  content: '⚠';
+  color: var(--warn);
+  flex-shrink: 0;
+}
+
+/* ── Speech habits ── */
+.habit-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.habit-item {
+  background: var(--step1-lt);
+  border: 1px solid color-mix(in srgb, var(--step1) 25%, transparent);
+  border-radius: 6px;
+  padding: 10px 12px;
+}
+.habit-quote {
+  font-size: .83rem;
+  font-weight: 700;
+  color: var(--step1);
+  font-style: italic;
+  margin-bottom: 4px;
+}
+.habit-meaning {
+  font-size: .72rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+/* ── Nonverbal checklist ── */
+.nonverb-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.nonverb-item {
+  display: flex;
+  gap: 8px;
+  font-size: .8rem;
+  align-items: flex-start;
+  padding: 8px 10px;
+  background: var(--bg-sub);
+  border-radius: 6px;
+  border: 1px solid var(--border);
+}
+.nonverb-icon { flex-shrink: 0; }
+
+/* ── Footer ── */
+.page-footer {
+  margin-top: 60px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+  font-size: .78rem;
+  color: var(--text-muted);
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* ── Mobile ── */
+@media (max-width: 768px) {
+  .page-wrap { grid-template-columns: 1fr; }
+  .sidebar { position: relative; height: auto; flex-direction: row; flex-wrap: wrap; padding: 12px 16px; gap: 0; }
+  .sidebar-logo { padding: 0; margin: 0 16px 0 0; border: none; }
+  .nav-section { display: none; }
+  .nav-link { padding: 6px 10px; font-size: .78rem; border-left: none; border-bottom: 2px solid transparent; }
+  .nav-link:hover, .nav-link.active { border-left-color: transparent; border-bottom-color: var(--accent); }
+  main { padding: 24px 20px; }
+  .iear-grid { grid-template-columns: 1fr 1fr; }
+  .goal-grid { grid-template-columns: 1fr; }
+  .type-grid { grid-template-columns: 1fr; }
+  .role-compare { grid-template-columns: 1fr; }
+  .risk-grid { grid-template-columns: 1fr; }
+  .axis-grid { grid-template-columns: 1fr 1fr; }
+  .habit-grid { grid-template-columns: 1fr; }
+  .nonverb-grid { grid-template-columns: 1fr; }
+  .principle-body { grid-template-columns: 1fr; }
+}
+
+/* ── Theme toggle ── */
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: auto;
+  padding: 12px 20px;
+  border-top: 1px solid rgba(255,255,255,.1);
+}
+.theme-toggle button {
+  background: rgba(255,255,255,.1);
+  border: none;
+  border-radius: 6px;
+  color: var(--nav-text);
+  font-size: .75rem;
+  padding: 5px 10px;
+  cursor: pointer;
+  font-family: inherit;
+}
+.theme-toggle button:hover { background: rgba(255,255,255,.2); }
+
+/* ── Anxiety cards ── */
+.anxiety-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.anxiety-card {
+  background: var(--warn-lt);
+  border: 1px solid color-mix(in srgb, var(--warn) 25%, transparent);
+  border-radius: 8px;
+  padding: 12px;
+  text-align: center;
+}
+.anxiety-num {
+  font-size: .65rem;
+  font-weight: 800;
+  color: var(--warn);
+  letter-spacing: .1em;
+  margin-bottom: 4px;
+}
+.anxiety-text {
+  font-size: .78rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+/* print ── */
+@media print {
+  .sidebar { display: none; }
+  .page-wrap { grid-template-columns: 1fr; }
+  main { padding: 16px; }
+}
+</style>
+
+<div class="page-wrap">
+
+<!-- ── Sidebar ── -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-label">See Deeper</div>
+    <div class="logo-title">ラポール指標<br>チェックリスト</div>
+  </div>
+
+  <div class="nav-section">基礎</div>
+  <a href="#definition" class="nav-link">
+    <span class="nav-dot" style="background:#2563EB"></span>ラポールとは
+  </a>
+
+  <div class="nav-section">ステップ</div>
+  <a href="#step1" class="nav-link">
+    <span class="nav-dot" style="background:#7C3AED"></span>STEP 1 事前準備
+  </a>
+  <a href="#step2" class="nav-link">
+    <span class="nav-dot" style="background:#0891B2"></span>STEP 2 セッション中
+  </a>
+  <a href="#step3" class="nav-link">
+    <span class="nav-dot" style="background:#059669"></span>STEP 3 悩みの層診断
+  </a>
+  <a href="#step4" class="nav-link">
+    <span class="nav-dot" style="background:#DC2626"></span>STEP 4 落とし穴回避
+  </a>
+  <a href="#step5" class="nav-link">
+    <span class="nav-dot" style="background:#D97706"></span>STEP 5 振り返り
+  </a>
+
+  <div class="nav-section">受講生タイプ別</div>
+  <a href="#types" class="nav-link">
+    <span class="nav-dot" style="background:#64748B"></span>タイプ別アプローチ
+  </a>
+
+  <div class="theme-toggle">
+    <button onclick="setTheme('light')">☀ Light</button>
+    <button onclick="setTheme('dark')">◑ Dark</button>
+    <button onclick="setTheme('')">Auto</button>
+  </div>
+</nav>
+
+<!-- ── Main ── -->
+<main>
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-eyebrow">See Deeper ― 一歩深く見るメンタリング</div>
+    <h1>ラポール指標<br>チェックリスト</h1>
+    <p class="hero-sub">初回1on1でメンターが使う自己チェックシート。事前準備から振り返りまで、安心できる関係構築の全ステップを網羅しています。</p>
+    <div class="hero-meta">
+      <span class="badge">Version 1.2</span>
+      <span class="badge">初回1on1対応</span>
+      <span class="badge">メンター育成ガイド</span>
+      <span class="badge">実例動画6本収録</span>
+    </div>
+  </div>
+
+  <!-- ── 定義 ── -->
+  <div id="definition">
+    <div class="def-box">
+      <div class="def-word">ラポールとは</div>
+      <div class="def-main">「安心して本音を話せる状態をつくること」</div>
+      <div class="def-sub">単なる「仲良くなること」でも「信頼される人になること」でもない。<br>受講生が自分の現在地・本音・不安を語れる場をつくることが、ラポールの本質。</div>
+
+      <div class="role-compare">
+        <div class="role-card ng">
+          <div class="role-label">NG</div>
+          <div class="role-name">友だち</div>
+          <div class="role-desc">共感するだけで前に進まない。好かれることが目的になる。</div>
+        </div>
+        <div class="role-card ng">
+          <div class="role-label">NG</div>
+          <div class="role-name">先生</div>
+          <div class="role-desc">正解を教えようとする。受講生が受け身になる。</div>
+        </div>
+        <div class="role-card ok">
+          <div class="role-label">あなたの役割</div>
+          <div class="role-name">伴走者</div>
+          <div class="role-desc">現在地を理解し、思考を整理し、一緒に前進する存在</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4つの不安 -->
+    <div class="card">
+      <div class="card-title">受講生が抱える4つの不安（初回前）</div>
+      <div class="anxiety-grid">
+        <div class="anxiety-card">
+          <div class="anxiety-num">ANXIETY 1</div>
+          <div class="anxiety-text">転職できるか<br>わからない</div>
+        </div>
+        <div class="anxiety-card">
+          <div class="anxiety-num">ANXIETY 2</div>
+          <div class="anxiety-text">学習についていけるか<br>わからない</div>
+        </div>
+        <div class="anxiety-card">
+          <div class="anxiety-num">ANXIETY 3</div>
+          <div class="anxiety-text">メンターと<br>うまくやれるか</div>
+        </div>
+        <div class="anxiety-card">
+          <div class="anxiety-num">ANXIETY 4</div>
+          <div class="anxiety-text">自分に<br>向いているか</div>
+        </div>
+        <div class="anxiety-card" style="grid-column: span 2;">
+          <div class="anxiety-num">初回の最終ゴール</div>
+          <div class="anxiety-text">「受け入れてもらえた」「理解してもらえた」「一緒にやれる」の3つを感じさせる</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── STEP 1 事前準備 ── -->
+  <div class="section s1" id="step1">
+    <div class="section-header">
+      <div class="step-num">S1</div>
+      <div>
+        <h2>事前準備</h2>
+        <p>セッション前に必ず完了させる。仮説なき1on1はない。</p>
+      </div>
+    </div>
+
+    <!-- リスクスクリーニング -->
+    <div class="card">
+      <div class="card-title">
+        <span class="icon" style="background:var(--ng-lt);color:var(--ng)">⚠</span>
+        慎重対応スクリーニング ― 7カテゴリ確認
+      </div>
+      <p style="font-size:.8rem;color:var(--text-muted);margin-bottom:12px">商談動画・申込情報・日報を確認。1つでも該当したら慎重対応フラグを立てる。</p>
+      <div class="risk-grid">
+        <div class="risk-card">
+          <div class="risk-cat">CAT 1</div>
+          <div class="risk-name">精神・メンタル系</div>
+          <div class="risk-kw">
+            <span>うつ</span><span>パニック</span><span>適応障害</span><span>睡眠障害</span><span>通院中</span>
+          </div>
+        </div>
+        <div class="risk-card">
+          <div class="risk-cat">CAT 2</div>
+          <div class="risk-name">家族・ライフイベント系</div>
+          <div class="risk-kw">
+            <span>産休明け直後</span><span>離婚調停中</span><span>介護中</span><span>DV</span>
+          </div>
+        </div>
+        <div class="risk-card">
+          <div class="risk-cat">CAT 3</div>
+          <div class="risk-name">経済的プレッシャー</div>
+          <div class="risk-kw">
+            <span>借金して受講</span><span>生活苦</span><span>副業で稼がないと</span><span>ローン中</span>
+          </div>
+        </div>
+        <div class="risk-card">
+          <div class="risk-cat">CAT 4</div>
+          <div class="risk-name">コミュニケーション困難</div>
+          <div class="risk-kw">
+            <span>ASD疑い</span><span>ADHD</span><span>人間関係トラウマ</span><span>極端な自己否定</span>
+          </div>
+        </div>
+        <div class="risk-card">
+          <div class="risk-cat">CAT 5</div>
+          <div class="risk-name">学習時間の構造問題</div>
+          <div class="risk-kw">
+            <span>夜勤専従</span><span>多拠点生活</span><span>完全リモート孤立</span><span>帰宅22時超</span>
+          </div>
+        </div>
+        <div class="risk-card">
+          <div class="risk-cat">CAT 6</div>
+          <div class="risk-name">転職目的の不一致</div>
+          <div class="risk-kw">
+            <span>親に言われた</span><span>流行っているから</span><span>目標が消極的</span>
+          </div>
+        </div>
+        <div class="risk-card" style="grid-column:span 2">
+          <div class="risk-cat">CAT 7</div>
+          <div class="risk-name">職歴・経歴の複雑さ</div>
+          <div class="risk-kw">
+            <span>転職6回以上</span><span>空白期間2年以上</span><span>業界とのギャップ大</span><span>40代未経験</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 仮説立て -->
+    <div class="card">
+      <div class="card-title">
+        <span class="icon" style="background:var(--step1-lt);color:var(--step1)">◎</span>
+        仮説を立てる（商談動画・申込情報から）
+      </div>
+      <ul class="check-list">
+        <li class="check-item">
+          <input type="checkbox" id="h1"><label for="h1">商談動画を視聴し、話すスピード・トーン・表情を確認した</label>
+        </li>
+        <li class="check-item">
+          <input type="checkbox" id="h2"><label for="h2">「現職でどんな壁を感じているか」を仮説として言語化した</label>
+        </li>
+        <li class="check-item">
+          <input type="checkbox" id="h3"><label for="h3">「目標金額の根拠」を確認し、現実度を確認した（低・中・高）</label>
+        </li>
+        <li class="check-item">
+          <input type="checkbox" id="h4"><label for="h4">「なぜ今このタイミングか」を仮説化した（外的動機 / 内的動機）</label>
+        </li>
+        <li class="check-item">
+          <input type="checkbox" id="h5"><label for="h5">慎重対応フラグの有無を確認し、対応方針を決めた</label>
+        </li>
+        <li class="check-item">
+          <input type="checkbox" id="h6"><label for="h6">顕在層（自覚あり）か潜在層（無自覚）かを推定した</label>
+        </li>
+      </ul>
+    </div>
+
+    <!-- クーリングオフ対策 -->
+    <div class="card">
+      <div class="card-title">
+        <span class="icon" style="background:var(--warn-lt);color:var(--warn)">!</span>
+        クーリングオフ（ギャップ期）対策
+      </div>
+      <ul class="check-list">
+        <li class="check-item">
+          <input type="checkbox" id="co1"><label for="co1">入金〜初回1on1の間に、最低1回のウェルカムメッセージを送った</label>
+        </li>
+        <li class="check-item">
+          <input type="checkbox" id="co2"><label for="co2">Slack・ツールの使い方を丁寧に案内した（ツール迷子を防ぐ）</label>
+        </li>
+        <li class="check-item">
+          <input type="checkbox" id="co3"><label for="co3">日報に24時間以内に返信した（「見てもらえてる感」の醸成）</label>
+        </li>
+        <li class="check-item">
+          <input type="checkbox" id="co4"><label for="co4">返信は事実への共感＋質問返しの形にした（スタンプのみはNG）</label>
+        </li>
+        <li class="check-item">
+          <input type="checkbox" id="co5"><label for="co5">マインド系の動画（3〜4本）を初回前に「お時間あれば」のスタンスで送った</label>
+        </li>
+        <div class="sub-note">動画URLを複数送る際はプレビューを消す → ボリューム感が小さく見えて離脱防止になる</div>
+      </ul>
+    </div>
+
+    <!-- カリキュラム公開ルール -->
+    <div class="card">
+      <div class="card-title">
+        <span class="icon" style="background:var(--step1-lt);color:var(--step1)">📋</span>
+        初回のカリキュラム公開ルール（量で圧倒しない）
+      </div>
+      <ul class="check-list">
+        <li class="check-item">
+          <input type="checkbox" id="cr1"><label for="cr1">初回は第1・2章のみを開いて見せた（3章以降は全体量が多く見えて萎縮させる）</label>
+        </li>
+        <li class="check-item">
+          <input type="checkbox" id="cr2"><label for="cr2">「1つだけやってみましょう」と入口を絞り、「あれ、思ったより行けそう」感を演出した</label>
+        </li>
+        <li class="check-item">
+          <input type="checkbox" id="cr3"><label for="cr3">案件獲得部屋は初回に見せなかった（不安型は比較で落ち込むリスクあり。ラポール形成後に適切なタイミングで）</label>
+        </li>
+        <li class="check-item">
+          <input type="checkbox" id="cr4"><label for="cr4">「やんないと無理ですよ」のスタンスを維持した（ビビると不安が伝わる）</label>
+        </li>
+      </ul>
+      <div class="sub-note" style="padding-left:0;margin-top:8px;padding:8px 10px;background:var(--ok-lt);border-radius:6px;border-left:3px solid var(--ok)">✅ カリキュラム全体像は「1ヶ月の理想スパン」として伝える。8章を目指しましょう、と目標ラインを示すだけでよい。</div>
+    </div>
+  </div>
+
+  <!-- ── STEP 2 セッション中 ── -->
+  <div class="section s2" id="step2">
+    <div class="section-header">
+      <div class="step-num">S2</div>
+      <div>
+        <h2>セッション中</h2>
+        <p>IEAR姿勢をベースに、5原則を流れとして実践する。</p>
+      </div>
+    </div>
+
+    <!-- コーチング vs ティーチング -->
+    <div class="card">
+      <div class="card-title">
+        <span class="icon" style="background:var(--ok-lt);color:var(--ok)">⚖</span>
+        コーチング：ティーチング ＝ 7：3 の法則
+      </div>
+      <div style="display:grid;grid-template-columns:3fr 2fr;gap:10px;margin-bottom:14px">
+        <div style="background:var(--ok-lt);border:1px solid color-mix(in srgb,var(--ok) 25%,transparent);border-radius:8px;padding:14px 16px">
+          <div style="font-size:.68rem;font-weight:800;color:var(--ok);letter-spacing:.1em;margin-bottom:6px">COACHING 70% — 引き出すターン</div>
+          <div style="font-size:.8rem;line-height:1.6">問いかけ・深掘り・言語化の確認。受講生に考えさせる。主導権は常に受講生に。<br><strong style="font-size:.78rem">「どう思いますか？」「なぜそう感じましたか？」</strong></div>
+        </div>
+        <div style="background:var(--accent-lt);border:1px solid color-mix(in srgb,var(--accent) 25%,transparent);border-radius:8px;padding:14px 16px">
+          <div style="font-size:.68rem;font-weight:800;color:var(--accent);letter-spacing:.1em;margin-bottom:6px">TEACHING 30% — 伝えるターン</div>
+          <div style="font-size:.8rem;line-height:1.6">気づかせた後の手段・知識提供。受講生が「なぜ」を理解してから「どうやって」を教える。</div>
+        </div>
+      </div>
+      <div style="background:var(--warn-lt);border-left:3px solid var(--warn);border-radius:6px;padding:10px 14px;margin-bottom:14px">
+        <div style="font-size:.73rem;font-weight:700;color:var(--warn);margin-bottom:4px">ティーチング過多になる原因</div>
+        <div style="font-size:.78rem;line-height:1.6">「5回で全部伝えきらなきゃ」という焦り → <strong>バトンのイメージ</strong>で解消。デザインメンターのあなたは次の営業メンターへ渡す人。1ヶ月で全部つくらなくていい。</div>
+      </div>
+      <div style="background:var(--step3-lt);border-left:3px solid var(--step3);border-radius:6px;padding:10px 14px;margin-bottom:14px">
+        <div style="font-size:.73rem;font-weight:700;color:var(--step3);margin-bottom:4px">笑顔でぶっ刺す</div>
+        <div style="font-size:.78rem;line-height:1.6">肯定しながら課題を明確に伝える手法。「○○さんのこういう良さを知ってるから、こっちの課題が気になるんですよね」。ラポールが気づけていると、指摘の言葉も「私のために言ってくれている」になる。</div>
+      </div>
+      <ul class="check-list">
+        <li class="check-item"><input type="checkbox" id="ct1"><label for="ct1">セッション中、どちらが多く話しているかを意識した（受講生が多いのが理想）</label></li>
+        <li class="check-item"><input type="checkbox" id="ct2"><label for="ct2">目標・カリキュラム進捗はメンターが決めず、受講生自身に決めさせた（「あなたがどうしたいか」）</label></li>
+        <li class="check-item"><input type="checkbox" id="ct3"><label for="ct3">目標金額は否定せず「○○万稼ぐために何が必要だと思いますか？」と問いかけた</label></li>
+        <li class="check-item"><input type="checkbox" id="ct4"><label for="ct4">「わかんないことありますか？→ない」は嘘の可能性を疑い、別の角度から引き出した</label></li>
+        <li class="check-item"><input type="checkbox" id="ct5"><label for="ct5">フリーランスとして必要な力を「第三者経由」で気づかせた（「フリーランサーってどんな力が必要だと思いますか？」）</label></li>
+      </ul>
+    </div>
+
+    <!-- IEAR -->
+    <div class="card">
+      <div class="card-title">4基本姿勢 — IEAR</div>
+      <div class="iear-grid">
+        <div class="iear-card">
+          <div class="iear-en">I</div>
+          <div class="iear-jp">Interest</div>
+          <div class="iear-desc">興味・関心<br>この人を知りたいという純粋な好奇心</div>
+        </div>
+        <div class="iear-card">
+          <div class="iear-en">E</div>
+          <div class="iear-jp">Empathy</div>
+          <div class="iear-desc">共感<br>感情の背景ごと受け取る</div>
+        </div>
+        <div class="iear-card">
+          <div class="iear-en">A</div>
+          <div class="iear-jp">Acceptance</div>
+          <div class="iear-desc">受容<br>評価せずそのままを受け止める</div>
+        </div>
+        <div class="iear-card">
+          <div class="iear-en">R</div>
+          <div class="iear-jp">Respect</div>
+          <div class="iear-desc">尊重<br>選択・ペースを否定しない</div>
+        </div>
+      </div>
+      <ul class="check-list">
+        <li class="check-item"><input type="checkbox" id="ie1"><label for="ie1">最初の3分は自己開示から入り、受講生が話しやすい空気をつくった</label></li>
+        <li class="check-item"><input type="checkbox" id="ie2"><label for="ie2">「正しい答えを言わなければ」というプレッシャーを与えていない</label></li>
+        <li class="check-item"><input type="checkbox" id="ie3"><label for="ie3">沈黙を埋めずに、考える時間を確保した</label></li>
+      </ul>
+    </div>
+
+    <!-- ラポール形成5原則 -->
+    <div class="card">
+      <div class="card-title">ラポール形成5原則 — NG / OK 対比</div>
+      <div class="principle-list">
+
+        <div class="principle-item">
+          <div class="principle-header">
+            <div class="principle-num">1</div>
+            <div class="principle-title">受け止める</div>
+          </div>
+          <div class="principle-body">
+            <div class="ng-ex">
+              <div class="ex-label">NG例</div>
+              <div class="ex-text">「でも頑張れば転職できますよ！」とすぐに励ます。受講生の感情を遮断している。</div>
+            </div>
+            <div class="ok-ex">
+              <div class="ex-label">OK例</div>
+              <div class="ex-text">「転職できるか不安なんですね。その気持ち、よくわかります。」と感情ラベルをつけて返す。</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="principle-item">
+          <div class="principle-header">
+            <div class="principle-num">2</div>
+            <div class="principle-title">深掘る</div>
+          </div>
+          <div class="principle-body">
+            <div class="ng-ex">
+              <div class="ex-label">NG例</div>
+              <div class="ex-text">「どんなお仕事をされてるんですか？」と表面的な事実だけ聞く。</div>
+            </div>
+            <div class="ok-ex">
+              <div class="ex-label">OK例</div>
+              <div class="ex-text">「その仕事、今どんな気持ちでやってますか？楽しいですか？しんどいですか？」と感情・体感を聞く。</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="principle-item">
+          <div class="principle-header">
+            <div class="principle-num">3</div>
+            <div class="principle-title">言語化する</div>
+          </div>
+          <div class="principle-body">
+            <div class="ng-ex">
+              <div class="ex-label">NG例</div>
+              <div class="ex-text">「なるほど〜」とだけ相槌を打って次の話題へ移る。</div>
+            </div>
+            <div class="ok-ex">
+              <div class="ex-label">OK例</div>
+              <div class="ex-text">「整理すると、今は○○で悩んでいて、本当はXXしたい、という感じですかね？」と要約して確認する。</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="principle-item">
+          <div class="principle-header">
+            <div class="principle-num">4</div>
+            <div class="principle-title">強みを見つける</div>
+          </div>
+          <div class="principle-body">
+            <div class="ng-ex">
+              <div class="ex-label">NG例</div>
+              <div class="ex-text">「すごいですね！」と漠然と褒める。根拠がなく伝わらない。</div>
+            </div>
+            <div class="ok-ex">
+              <div class="ex-label">OK例</div>
+              <div class="ex-text">「6回転職されているということは、環境適応力と決断力がある証拠だと思います。デザインでも活きます。」と具体的に強みを言語化する。</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="principle-item">
+          <div class="principle-header">
+            <div class="principle-num">5</div>
+            <div class="principle-title">未来を見せる</div>
+          </div>
+          <div class="principle-body">
+            <div class="ng-ex">
+              <div class="ex-label">NG例</div>
+              <div class="ex-text">「一緒に頑張りましょう！」と気合いだけ入れて終わる。</div>
+            </div>
+            <div class="ok-ex">
+              <div class="ex-label">OK例</div>
+              <div class="ex-text">「3ヶ月後の○○さんが、週5副業案件をこなしている姿を一緒につくりたいです。」と具体的なビジョンを共有する。</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 非言語観察 -->
+    <div class="card">
+      <div class="card-title">
+        <span class="icon" style="background:var(--step2-lt);color:var(--step2)">◑</span>
+        非言語・態度の観察チェック
+      </div>
+      <div class="axis-grid">
+        <div class="axis-card">
+          <div class="axis-name">マインド</div>
+          <div class="axis-items">積極性、発言量<br>前向き度合い</div>
+        </div>
+        <div class="axis-card">
+          <div class="axis-name">思考力</div>
+          <div class="axis-items">論理の整理度<br>仮説思考の有無</div>
+        </div>
+        <div class="axis-card">
+          <div class="axis-name">スキル</div>
+          <div class="axis-items">既存知識量<br>学習スピード</div>
+        </div>
+        <div class="axis-card">
+          <div class="axis-name">コミュニ<br>ケーション</div>
+          <div class="axis-items">返答の明確さ<br>質問力</div>
+        </div>
+        <div class="axis-card">
+          <div class="axis-name">非言語</div>
+          <div class="axis-items">表情・声量<br>間の取り方</div>
+        </div>
+      </div>
+      <div class="nonverb-grid">
+        <div class="nonverb-item"><span class="nonverb-icon">👁</span>カメラオフ / オンの差・表情の豊かさを確認した</div>
+        <div class="nonverb-item"><span class="nonverb-icon">🎙</span>声のトーン・スピード・間の長さを確認した</div>
+        <div class="nonverb-item"><span class="nonverb-icon">✋</span>身振り手振り・うなずきの頻度を確認した</div>
+        <div class="nonverb-item"><span class="nonverb-icon">💬</span>言葉と感情が一致しているか（表面上OK/内面不安）を確認した</div>
+      </div>
+    </div>
+
+    <!-- 4つの口癖 -->
+    <div class="card">
+      <div class="card-title">
+        <span class="icon" style="background:var(--step1-lt);color:var(--step1)">耳</span>
+        見逃しやすい4つの口癖（深掘りサイン）
+      </div>
+      <div class="habit-grid">
+        <div class="habit-item">
+          <div class="habit-quote">「でも〜だから無理で」</div>
+          <div class="habit-meaning">自己制限思考。マインドブロックの可能性。「その "でも" の前は？」と掘り下げる。</div>
+        </div>
+        <div class="habit-item">
+          <div class="habit-quote">「まあ、なんとかなるかな」</div>
+          <div class="habit-meaning">問題の矮小化。ポジティブすぎる場合は具体的リスクを一緒に確認する。</div>
+        </div>
+        <div class="habit-item">
+          <div class="habit-quote">「みんなそうですよね？」</div>
+          <div class="habit-meaning">承認欲求・比較依存のサイン。個別フィードバックで差別化する。</div>
+        </div>
+        <div class="habit-item">
+          <div class="habit-quote">「やってみます（即答）」</div>
+          <div class="habit-meaning">表面的な同意。本当に理解しているか確認する質問を1つ追加する。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 例え話ライブラリ -->
+    <div class="card">
+      <div class="card-title">
+        <span class="icon" style="background:var(--step2-lt);color:var(--step2)">💬</span>
+        汎用例え話ライブラリ（誰にでも使える3パターン）
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div style="display:grid;grid-template-columns:80px 1fr;gap:10px;align-items:start;background:var(--bg-sub);border-radius:8px;padding:12px 14px;border:1px solid var(--border)">
+          <div style="font-size:.85rem;font-weight:800;color:var(--step2)">🚗 運転免許</div>
+          <div style="font-size:.78rem;line-height:1.55">「免許を取ったからといって最初から上手く運転できるわけじゃない。練習を重ねることで初めてスムーズに走れる。デザインも同じ。」<br><span style="color:var(--text-muted);font-size:.72rem">→ スキル習得の時間と反復練習の必要性を伝えるとき</span></div>
+        </div>
+        <div style="display:grid;grid-template-columns:80px 1fr;gap:10px;align-items:start;background:var(--bg-sub);border-radius:8px;padding:12px 14px;border:1px solid var(--border)">
+          <div style="font-size:.85rem;font-weight:800;color:var(--step2)">💪 筋トレ</div>
+          <div style="font-size:.78rem;line-height:1.55">「筋肉は1日では付かない。毎日少しずつ続けることで確実に変わっていく。焦らなくていい。」<br><span style="color:var(--text-muted);font-size:.72rem">→ 進捗が遅いと感じている受講生の焦りを緩めるとき</span></div>
+        </div>
+        <div style="display:grid;grid-template-columns:80px 1fr;gap:10px;align-items:start;background:var(--bg-sub);border-radius:8px;padding:12px 14px;border:1px solid var(--border)">
+          <div style="font-size:.85rem;font-weight:800;color:var(--step2)">🍑 桃太郎</div>
+          <div style="font-size:.78rem;line-height:1.55">「桃太郎は仲間を集めながら進んでいく。一人でやろうとしなくていい。グルコン・メンターを仲間として使って。」<br><span style="color:var(--text-muted);font-size:.72rem">→ 孤立傾向・一人で抱え込みやすい受講生に</span></div>
+        </div>
+      </div>
+      <div class="sub-note" style="padding-left:0;margin-top:8px">⚠ 例え話の後は「どう感じましたか？」と必ず相手に言わせて確認する。一方通行で終わらせない。</div>
+    </div>
+
+    <!-- 動機タイプ分類 -->
+    <div class="card">
+      <div class="card-title">
+        <span class="icon" style="background:var(--step1-lt);color:var(--step1)">🧭</span>
+        受講生の動機タイプ見極め
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+        <div style="background:var(--ok-lt);border:1px solid color-mix(in srgb,var(--ok) 25%,transparent);border-radius:8px;padding:12px 14px;border-left:3px solid var(--ok)">
+          <div style="font-size:.73rem;font-weight:800;color:var(--ok);margin-bottom:4px">ワクワク型（目標から入った）</div>
+          <div style="font-size:.78rem;line-height:1.5">「デザインが好き」「フリーランスになりたい」など前向きな動機が明確。ゴールをより具体的に膨らませる問いかけが有効。</div>
+        </div>
+        <div style="background:var(--warn-lt);border:1px solid color-mix(in srgb,var(--warn) 25%,transparent);border-radius:8px;padding:12px 14px;border-left:3px solid var(--warn)">
+          <div style="font-size:.73rem;font-weight:800;color:var(--warn);margin-bottom:4px">回避型（不安から入った）</div>
+          <div style="font-size:.78rem;line-height:1.5">「今の職場から逃げたい」「不安で始めた」。否定せず、回避動機の先にある本当の理想を引き出す。焦らせる ≠ 現実を見せる。</div>
+        </div>
+      </div>
+      <div style="background:var(--bg-sub);border-radius:6px;padding:10px 14px;border:1px solid var(--border);font-size:.78rem">
+        <strong>振り返り→ロードマップ の順番を守る</strong><br>
+        <span style="color:var(--text-muted)">ロードマップを先に見せると「こなす」モードに入る。先に「今どんな気持ちか」を振り返らせてから将来像を見せると、言ってることとやってることのズレが本人に見えてきて自己認識が深まる。</span>
+      </div>
+    </div>
+
+    <!-- セッション中チェック -->
+    <div class="card">
+      <div class="card-title">セッション中 行動チェック</div>
+      <ul class="check-list">
+        <li class="check-item"><input type="checkbox" id="s2c1"><label for="s2c1">話す割合：受講生7 / メンター3 を意識した</label></li>
+        <li class="check-item"><input type="checkbox" id="s2c2"><label for="s2c2">「なぜそう感じるか」を1段階以上深く聞いた</label></li>
+        <li class="check-item"><input type="checkbox" id="s2c3"><label for="s2c3">事実（起きたこと）と解釈（感じたこと）を分けて理解した</label></li>
+        <li class="check-item"><input type="checkbox" id="s2c4"><label for="s2c4">受講生が「また話したい」と思えそうな終わり方をした</label></li>
+        <li class="check-item"><input type="checkbox" id="s2c5"><label for="s2c5">ゴール（カリキュラム完走のみ）に縛られすぎず、受講生の人生ゴールを確認した</label></li>
+        <li class="check-item"><input type="checkbox" id="s2c6"><label for="s2c6">振り返り（今の気持ち・状態）を先に確認し、その後にロードマップや提案を見せた</label></li>
+      </ul>
+    </div>
+
+    <!-- 初回によくある不安 -->
+    <div class="card">
+      <div class="card-title">初回によくある不安タイプ（話題として拾う）</div>
+      <ul class="check-list">
+        <li class="check-item"><input type="checkbox" id="sa1"><label for="sa1">「学習ペースについていけるか」という時間・学習量の不安</label></li>
+        <li class="check-item"><input type="checkbox" id="sa2"><label for="sa2">「転職できるか」という転職成功への不安</label></li>
+        <li class="check-item"><input type="checkbox" id="sa3"><label for="sa3">「センスがないのでは」というデザイン適性への不安</label></li>
+        <li class="check-item"><input type="checkbox" id="sa4"><label for="sa4">「年齢的に遅いのでは」というタイミングへの不安</label></li>
+        <li class="check-item"><input type="checkbox" id="sa5"><label for="sa5">「家族・パートナーに反対されている」という周囲との摩擦</label></li>
+        <li class="check-item"><input type="checkbox" id="sa6"><label for="sa6">「お金が続くか」という経済的な不安</label></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ── STEP 3 悩みの層診断 ── -->
+  <div class="section s3" id="step3">
+    <div class="section-header">
+      <div class="step-num">S3</div>
+      <div>
+        <h2>悩みのピラミッド診断</h2>
+        <p>受講生の悩みがどの層にあるかを把握してアプローチを変える。</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">悩みのピラミッド（下から順に深刻）</div>
+      <div class="pyramid-wrap">
+        <div class="pyramid-layer goal">
+          <div class="layer-tag">GOAL / 目的</div>
+          <div class="layer-content">
+            <strong>目標・目的が曖昧 / ズレている</strong>
+            <p>「なぜデザイナーになりたいか」が言語化されていない状態</p>
+          </div>
+          <div class="layer-q">「○○さんにとって、デザインで何を実現したいですか？」</div>
+        </div>
+        <div class="pyramid-layer means">
+          <div class="layer-tag">MEANS / 手段</div>
+          <div class="layer-content">
+            <strong>やり方・ツールがわからない</strong>
+            <p>学習方法・ポートフォリオ・ツールに悩んでいる</p>
+          </div>
+          <div class="layer-q">「今のカリキュラムで詰まっているところはどこですか？」</div>
+        </div>
+        <div class="pyramid-layer resource">
+          <div class="layer-tag">RESOURCE / リソース</div>
+          <div class="layer-content">
+            <strong>時間・エネルギー・環境が足りない</strong>
+            <p>学習時間の確保、体力、家庭環境などの現実的な壁</p>
+          </div>
+          <div class="layer-q">「1週間でどれくらい学習に使える時間がありますか？」</div>
+        </div>
+        <div class="pyramid-layer mind">
+          <div class="layer-tag">MIND / マインド</div>
+          <div class="layer-content">
+            <strong>自己否定・自信のなさ・恐れ</strong>
+            <p>「自分には無理」「センスがない」という信念レベルのブロック</p>
+          </div>
+          <div class="layer-q">「どんな場面で一番つらいと感じますか？」</div>
+        </div>
+      </div>
+      <ul class="check-list" style="margin-top:16px">
+        <li class="check-item"><input type="checkbox" id="pyr1"><label for="pyr1">受講生の悩みがどの層かを今セッションで把握した</label></li>
+        <li class="check-item"><input type="checkbox" id="pyr2"><label for="pyr2">表面（手段層）の相談に答える前にマインド・リソース層を確認した</label></li>
+        <li class="check-item"><input type="checkbox" id="pyr3"><label for="pyr3">ピラミッドの深い層（マインド）の問題なら、解決策より傾聴を優先した</label></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ── STEP 4 落とし穴回避 ── -->
+  <div class="section s4" id="step4">
+    <div class="section-header">
+      <div class="step-num">S4</div>
+      <div>
+        <h2>落とし穴チェック</h2>
+        <p>やってしまいがちなNG行動を自覚して避ける。</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="pitfall-list">
+        <div class="pitfall-item">
+          <div class="pitfall-icon">❌</div>
+          <div>
+            <div class="pitfall-name">ピットフォール 1：距離感の誤り（BtoB感）</div>
+            <div class="pitfall-desc">初回からビジネスライクすぎる話し方・質問をして、受講生が壁を感じる。特に丁寧語だけで進めるとドライに見える。</div>
+            <div class="pitfall-fix">→ 自己開示・雑談から入り、「一緒にやる人」感を最初の5分で出す。</div>
+          </div>
+        </div>
+        <div class="pitfall-item">
+          <div class="pitfall-icon">❌</div>
+          <div>
+            <div class="pitfall-name">ピットフォール 2：先生になる（答えを教えすぎる）</div>
+            <div class="pitfall-desc">「こうすればいいですよ」と正解を渡しすぎて受講生が受け身になる。自己解決力が育たない。</div>
+            <div class="pitfall-fix">→ 質問で考えさせる。「どう思いますか？」「どうしたいですか？」を先に聞く。</div>
+          </div>
+        </div>
+        <div class="pitfall-item">
+          <div class="pitfall-icon">❌</div>
+          <div>
+            <div class="pitfall-name">ピットフォール 3：共感しすぎて前に進まない</div>
+            <div class="pitfall-desc">「そうですよね〜大変でしたね〜」の繰り返しで課題が整理されない。友だちになって終わる。</div>
+            <div class="pitfall-fix">→ 受け止めた後は「じゃあ次のアクションとして何ができそうですか？」と前進に繋げる。</div>
+          </div>
+        </div>
+        <div class="pitfall-item">
+          <div class="pitfall-icon">❌</div>
+          <div>
+            <div class="pitfall-name">ピットフォール 4：ポジティブの押しつけ</div>
+            <div class="pitfall-desc">「大丈夫！絶対できます！」と根拠なく励まして、受講生の不安を無効化する。否定されたと感じる人も。</div>
+            <div class="pitfall-fix">→ 不安を一旦受け取ってから、根拠ある言葉で肯定する（経験・強みに紐づけた励まし）。</div>
+          </div>
+        </div>
+        <div class="pitfall-item">
+          <div class="pitfall-icon">❌</div>
+          <div>
+            <div class="pitfall-name">ピットフォール 5：カリキュラム完走だけをゴールにする</div>
+            <div class="pitfall-desc">「課題を終わらせる」「フィードバックをする」だけになり、受講生の人生・キャリアが見えていない。</div>
+            <div class="pitfall-fix">→ カリキュラムは手段。「転職後の理想の働き方」を定期的に確認し続ける。</div>
+          </div>
+        </div>
+        <div class="pitfall-item">
+          <div class="pitfall-icon">❌</div>
+          <div>
+            <div class="pitfall-name">ピットフォール 6：目標金額を否定する・メンターが決める</div>
+            <div class="pitfall-desc">「現実的に無理ですよ」と言うと受講生の可能性を閉じてしまう。逆にメンターが目標を決めると「あなたが言ったから」という依存が生まれる。</div>
+            <div class="pitfall-fix">→ 「30万稼ぐために何が必要だと思いますか？」と問いかけ、受講生自身に考えさせる。目標・進捗はすべて受講生が決める。</div>
+          </div>
+        </div>
+        <div class="pitfall-item">
+          <div class="pitfall-icon">❌</div>
+          <div>
+            <div class="pitfall-name">ピットフォール 7：不安に引っ張られる（ビビる）</div>
+            <div class="pitfall-desc">受講生の暗い表情・不安な雰囲気に圧倒されてメンターも柔らかくなりすぎる。メンター自身の不安は伝わる。</div>
+            <div class="pitfall-fix">→ 「やんないと無理ですよ」のスタンスをぶらさない。自信を持って接することが受講生の安心感につながる。ビビった瞬間に主導権が逆転する。</div>
+          </div>
+        </div>
+        <div class="pitfall-item">
+          <div class="pitfall-icon">❌</div>
+          <div>
+            <div class="pitfall-name">ピットフォール 8：伝え方が「あなたはダメ」になる</div>
+            <div class="pitfall-desc">課題をストレートに指摘すると受講生が防衛モードに入り、次回から相談しにくくなる。ラポールが崩れやすい。</div>
+            <div class="pitfall-fix">→「こういう印象を与えてしまうかもしれない、あなたの良さが伝わらなくて私は悔しい」という伝え方。絆奏者として「私はあなたの味方」と伝わる言葉選びをする。</div>
+          </div>
+        </div>
+      </div>
+      <ul class="check-list" style="margin-top:16px">
+        <li class="check-item"><input type="checkbox" id="pt1"><label for="pt1">「先生モード」になっていないか自己チェックした</label></li>
+        <li class="check-item"><input type="checkbox" id="pt2"><label for="pt2">「共感で止まっていないか」を確認し、前進のアクションを一つ決めた</label></li>
+        <li class="check-item"><input type="checkbox" id="pt3"><label for="pt3">距離感が「友人」「ビジネス」のどちらにも偏っていないことを確認した</label></li>
+        <li class="check-item"><input type="checkbox" id="pt4"><label for="pt4">目標・進捗をメンターが決めておらず、受講生自身が選択した</label></li>
+        <li class="check-item"><input type="checkbox" id="pt5"><label for="pt5">課題を伝える際、「絆奏者として味方」の立場を言葉と態度で示せた</label></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ── STEP 5 振り返り ── -->
+  <div class="section s5" id="step5">
+    <div class="section-header">
+      <div class="step-num">S5</div>
+      <div>
+        <h2>セッション後の振り返り</h2>
+        <p>成功基準と警戒サインで次回の準備に繋げる。</p>
+      </div>
+    </div>
+
+    <!-- 成功基準 -->
+    <div class="card">
+      <div class="card-title">初回1on1 成功基準 — 3つの感情</div>
+      <div class="goal-grid">
+        <div class="goal-card">
+          <div class="goal-emoji">🤝</div>
+          <div class="goal-label">受け入れてもらえた</div>
+          <div class="goal-desc">自分の背景・悩みをジャッジなしに聞いてもらえた感覚</div>
+        </div>
+        <div class="goal-card">
+          <div class="goal-emoji">💡</div>
+          <div class="goal-label">理解してもらえた</div>
+          <div class="goal-desc">メンターが自分の状況をわかってくれていると感じた</div>
+        </div>
+        <div class="goal-card">
+          <div class="goal-emoji">🚀</div>
+          <div class="goal-label">一緒にやれる</div>
+          <div class="goal-desc">このメンターと頑張れると思えた。次回が楽しみ。</div>
+        </div>
+      </div>
+      <ul class="check-list">
+        <li class="check-item"><input type="checkbox" id="r1"><label for="r1">受講生が「話してよかった」という様子で終われた（言葉・表情・反応から判断）</label></li>
+        <li class="check-item"><input type="checkbox" id="r2"><label for="r2">次回セッションの日程を受講生自ら確認・提案してきた（能動性）</label></li>
+        <li class="check-item"><input type="checkbox" id="r3"><label for="r3">セッション後24時間以内に、日報やSlackで反応があった</label></li>
+        <li class="check-item"><input type="checkbox" id="r4"><label for="r4">今日の仮説と実際の受講生の様子を照合し、認識のズレをメモした</label></li>
+      </ul>
+    </div>
+
+    <!-- 警戒サイン -->
+    <div class="card">
+      <div class="card-title">
+        <span class="icon" style="background:var(--warn-lt);color:var(--warn)">⚠</span>
+        継続ウォッチが必要な警戒サイン
+      </div>
+      <div class="warn-list">
+        <div class="warn-item">日報の返信率が下がった、または返信が短くなってきた</div>
+        <div class="warn-item">「大丈夫です」「問題ないです」しか言わなくなった（壁の構築）</div>
+        <div class="warn-item">セッションでの発言量が急に減った</div>
+        <div class="warn-item">設定した行動目標を毎回達成できていない（リソース不足 or マインドブロック）</div>
+        <div class="warn-item">「やっぱり自分には無理かも」という言葉が複数回出た</div>
+        <div class="warn-item">家族・パートナーとの衝突が増えたと報告があった</div>
+        <div class="warn-item">Slackの返信がスタンプのみで終わりラリーにならない（受け身・クライアントワークで危険サイン）</div>
+        <div class="warn-item">グルコンに参加しているが「良さがわからない」と言う（能動的参加ができていない＝受け身思考）</div>
+        <div class="warn-item">カリキュラムを開いた形跡・言語化シートの提出がない（未読・未学習の見抜きポイント）</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 受講生タイプ別 ── -->
+  <div class="section st" id="types">
+    <div class="section-header">
+      <div class="step-num" style="width:auto;padding:0 12px;font-size:.7rem">TYPE</div>
+      <div>
+        <h2>受講生タイプ別アプローチ</h2>
+        <p>実例ナレッジから抽出した11タイプ。見極めポイントと有効な対応を記載。</p>
+      </div>
+    </div>
+
+    <div class="type-grid">
+
+      <!-- ポジティブすぎる -->
+      <div class="type-card">
+        <div class="type-header">
+          <div class="type-tag">TYPE 01</div>
+          <div class="type-name">ポジティブ思考強め</div>
+        </div>
+        <div class="type-body">
+          <div class="type-signal">⚡ 見極め：「なんとかなりますよ！」「大丈夫です！」が多い</div>
+          <ul class="type-points">
+            <li>楽観的発言に「そうですね」で終わらせない。「具体的にどうなると大丈夫ですか？」と確認する</li>
+            <li>リスクを否定せず、質問で現実を一緒に確認する（否定するのではなく、解像度を上げる）</li>
+            <li>「最悪の場合どうなりますか？」と穏やかに聞き、対応策を一緒に考える</li>
+            <li>ネガティブな感情を引き出す質問を意図的に用意しておく</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 完璧主義 -->
+      <div class="type-card">
+        <div class="type-header">
+          <div class="type-tag">TYPE 02</div>
+          <div class="type-name">完璧主義・慎重型</div>
+        </div>
+        <div class="type-body">
+          <div class="type-signal">⚡ 見極め：課題提出が遅い、自己評価が低い、「まだ未完成で」が多い</div>
+          <ul class="type-points">
+            <li>「完成してから見せる」を「今の状態で見せる練習」にシフトさせる</li>
+            <li>「完璧じゃなくていい」をロジックで伝える（デザイナーは修正が仕事）</li>
+            <li>小さな完成を積み重ねてもらい、完了体験を増やす</li>
+            <li>妊娠中・産休明けなど体力・集中力が限られる場合は特に丁寧に</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 比較で落ち込む -->
+      <div class="type-card">
+        <div class="type-header">
+          <div class="type-tag">TYPE 03</div>
+          <div class="type-name">比較・落ち込みやすい</div>
+        </div>
+        <div class="type-body">
+          <div class="type-signal">⚡ 見極め：「他の受講生はもっとできてるのに」「私だけ遅い」が出る</div>
+          <ul class="type-points">
+            <li>他者との比較から自己の成長軸に視点を移す（「先月の自分と今日を比べたら？」）</li>
+            <li>強みを具体的に、根拠つきで伝え続ける</li>
+            <li>「自己嫌悪になるのは真剣に取り組んでいる証拠」とリフレーミングする</li>
+            <li>日報で小さな前進を毎日見つけてコメントする習慣をつくる</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 思考過多 -->
+      <div class="type-card">
+        <div class="type-header">
+          <div class="type-tag">TYPE 04</div>
+          <div class="type-name">思考過多・考えすぎ</div>
+        </div>
+        <div class="type-body">
+          <div class="type-signal">⚡ 見極め：質問が多い、一つの課題に時間をかけすぎる、理由を求める</div>
+          <ul class="type-points">
+            <li>思考を止めて「まずやってみる」体験を意図的に作る</li>
+            <li>タイムボックスを設定する（「30分だけやって、出たもので話しましょう」）</li>
+            <li>「正しいか」より「動かせるか」に評価軸をずらす言葉を使う</li>
+            <li>「思考している」こと自体は否定せず、出口（行動）を一緒に作る</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 自己管理課題 -->
+      <div class="type-card">
+        <div class="type-header">
+          <div class="type-tag">TYPE 05</div>
+          <div class="type-name">学習時間・自己管理に課題</div>
+        </div>
+        <div class="type-body">
+          <div class="type-signal">⚡ 見極め：「時間がなくて」が続く、日報が不定期、課題進捗が停滞</div>
+          <ul class="type-points">
+            <li>時間が「ない」のか「作れていない」のかを分けて把握する</li>
+            <li>1週間のスケジュールを一緒に確認し、学習できる「隙間」を見つける</li>
+            <li>Slackの使い方・ツール操作で混乱していないか早期確認</li>
+            <li>週の報告タイミングを固定化して、ペースを外側から構造化する</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 安全欲求強め -->
+      <div class="type-card">
+        <div class="type-header">
+          <div class="type-tag">TYPE 06</div>
+          <div class="type-name">安全欲求強め・リスク回避型</div>
+        </div>
+        <div class="type-body">
+          <div class="type-signal">⚡ 見極め：変化を嫌う、「本当に大丈夫？」を繰り返す、保険的な選択肢を求める</div>
+          <ul class="type-points">
+            <li>小さな成功体験を積み重ね、変化への耐性をゆっくり育てる</li>
+            <li>「最悪の場合でも○○できる」という安全網を言語化して提供する</li>
+            <li>プロセスの予測可能性を高める（次のセッションで何を話すか事前共有）</li>
+            <li>将来リスク（案件獲得できない/転職が長引く等）を早期に共有しておく</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- ドライ・表情読めない -->
+      <div class="type-card">
+        <div class="type-header">
+          <div class="type-tag">TYPE 07</div>
+          <div class="type-name">表情が読み取りづらい・ドライ</div>
+        </div>
+        <div class="type-body">
+          <div class="type-signal">⚡ 見極め：カメラオフ、返答が短い、リアクションが薄い</div>
+          <ul class="type-points">
+            <li>日報を感情の代替情報として活用（内容・文体・送信頻度に注目）</li>
+            <li>「楽しかったですか？」ではなく「どの部分が面白かったですか？」と具体質問</li>
+            <li>「何かあればSlackで」ではなく「◯日に進捗確認させてください」と能動的に繋ぐ</li>
+            <li>文字でのコミュニケーションが得意な場合、日報・Slackでのやり取りを丁寧に</li>
+            <li>無理にオープンにさせず、安心できる範囲でゆっくり開いてもらう</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 40代以降 -->
+      <div class="type-card">
+        <div class="type-header">
+          <div class="type-tag">TYPE 08</div>
+          <div class="type-name">40代以降の受講生</div>
+        </div>
+        <div class="type-body">
+          <div class="type-signal">⚡ 見極め：キャリアの誇り、プライド、若手扱いへの違和感が見える</div>
+          <ul class="type-points">
+            <li>「未経験だから当然」という言い方をしない。長年の職業経験を強みとして言語化する</li>
+            <li>タメ口・フランクすぎる言葉遣いは避ける。対等な大人として接する</li>
+            <li>指摘は「私も似た経験があり〜」と自己開示を交えてから伝える</li>
+            <li>学習スピードへの焦りを感じていることが多い。速さより確実さを肯定する</li>
+            <li>「この年齢でもできた実例」を積極的に共有する</li>
+            <li>デジタルツール（Figma・Slack等）に慣れるまで余裕を持ったペース設定を</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 男性受講生 -->
+      <div class="type-card">
+        <div class="type-header">
+          <div class="type-tag">TYPE 09</div>
+          <div class="type-name">男性受講生（BtoB経験者）</div>
+        </div>
+        <div class="type-body">
+          <div class="type-signal">⚡ 見極め：論理的・効率重視の発言、感情を表に出しにくい、「手のひら」で話す</div>
+          <ul class="type-points">
+            <li>「なぜこのアプローチが効果的か」を論理的に説明する（感情訴求だけでは響かない）</li>
+            <li>効率・コスパの観点からデザイン学習の価値を伝える</li>
+            <li>BtoB感覚（プレゼン・提案書）のスキルをデザインに活かせると伝える</li>
+            <li>感情の話が出たときは大切にして「その感覚は重要です」と明示的に価値づける</li>
+            <li>ロールモデル戦略：「憧れの起業家ってどう動いてると思う？」と第三者ロールモデル経由で行動を引き出す</li>
+            <li>ブースト戦略：「行けるかもしれん俺」感覚を意図的に作る。論理的な根拠を添えて自信を刺激する</li>
+            <li>声のトーンを低くハキハキ（柔らかすぎると「考えていない」と思われる）。特にメンターが年下の場合</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- ママさん受講生 -->
+      <div class="type-card">
+        <div class="type-header">
+          <div class="type-tag">TYPE 10</div>
+          <div class="type-name">ママさん受講生</div>
+        </div>
+        <div class="type-body">
+          <div class="type-signal">⚡ 見極め：子供の話題が多い、時間の断片化、「罪悪感」ワード、家事も完璧にしようとしている</div>
+          <ul class="type-points">
+            <li>子育てとの両立に対して「それは大変ですね」と先に共感する</li>
+            <li>「家族のためにやっている」という動機を強みとして肯定する</li>
+            <li>学習できない日があっても責めない。「再開できた」ことを毎回評価する</li>
+            <li>産休明け直後は特に慎重対応フラグで管理（身体的・精神的に余裕が限られる）</li>
+            <li>在宅ワーク・フリーランスへの夢を具体的なロールモデルで示す</li>
+            <li>完璧主義の延長：家事・育児も完璧にやろうとしている可能性がある。「1週間で何時間取れそうか」を聞き、環境・構造の問題かマインドの問題か分ける</li>
+            <li>センシティブトピック（妊娠・出産・子育て）には不用意に触れない。本人が話したら丁寧に受け取る</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 効率厨 -->
+      <div class="type-card">
+        <div class="type-header">
+          <div class="type-tag">TYPE 11</div>
+          <div class="type-name">効率厨・最短ルート志向</div>
+        </div>
+        <div class="type-body">
+          <div class="type-signal">⚡ 見極め：「最速で転職するには？」「これって必要ですか？」が多い</div>
+          <ul class="type-points">
+            <li>「なぜこのカリキュラムが必要か」を毎回丁寧に説明する（スキップを防ぐ）</li>
+            <li>ショートカット願望に乗らず、基礎の重要性をロジカルに伝える</li>
+            <li>「急ぎたい気持ち」は否定せず、「急ぐほど基礎が重要」という逆説を伝える</li>
+            <li>目標から逆算したロードマップを一緒に作り、納得感を与える</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 受け身型 -->
+      <div class="type-card">
+        <div class="type-header">
+          <div class="type-tag">TYPE 12</div>
+          <div class="type-name">受け身型・与えられ待ち</div>
+        </div>
+        <div class="type-body">
+          <div class="type-signal">⚡ 見極め：Slackがスタンプのみ、グルコンの良さがわからない、「入ってみたけど静かだった」</div>
+          <ul class="type-points">
+            <li>Slackラリー診断：返信がスタンプのみで会話にならない → クライアントワークでも同じ対応をする危険サイン</li>
+            <li>グルコン参加しているが「良さがわからない」→ 自発的に何も発信していない＝与えられるもの意識で動いている</li>
+            <li>カリキュラムをクライアントワークとしてロールプレイさせる（「このやり取り、クライアントさんだと思ってやってみて」）</li>
+            <li>「アクションしてみましたか？」「発言したことありますか？」と問い返し、能動的行動を促す</li>
+            <li>「こういう対応は印象がどう見えると思う？」と第三者視点で気づかせる（批判ではなくリスクヘッジとして伝える）</li>
+            <li>フリーランサーとして必要な力を一緒に言語化し、「今自分にそれはあるか」を自己評価させる</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- メンターへのメッセージ -->
+  <div class="def-box" style="border-left-color:var(--ok);margin-top:40px">
+    <div class="def-word" style="color:var(--ok)">メンターへのメッセージ</div>
+    <div class="def-main">あなたの1on1が、誰かの人生を変える。</div>
+    <div class="def-sub">
+      受講生は「成長の伴走者」を求めています。テクニックより先に、この人の現在地を理解しようとする姿勢がラポールをつくります。<br><br>
+      完璧なセッションは最初からありません。毎回の振り返りと仮説の更新が、あなたを一流のメンターにします。<br><br>
+      <strong>受け止める → 深掘る → 言語化する → 強みを見つける → 未来を見せる。</strong><br>
+      この5原則を、焦らず、丁寧に。
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <span>初回1on1 メンター育成ガイド Version 1.3 — 実例動画6本収録</span>
+    <span>See Deeper ― 一歩深く見るメンタリング | September 2024</span>
+  </div>
+
+</main>
+</div>
+
+<script>
+function setTheme(t) {
+  if (t) document.documentElement.setAttribute('data-theme', t);
+  else document.documentElement.removeAttribute('data-theme');
+  localStorage.setItem('rapport-theme', t);
+}
+(function() {
+  const saved = localStorage.getItem('rapport-theme');
+  if (saved) setTheme(saved);
+  // Active nav links
+  const links = document.querySelectorAll('.nav-link');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const id = e.target.id;
+        links.forEach(l => {
+          l.classList.toggle('active', l.getAttribute('href') === '#' + id);
+        });
+      }
+    });
+  }, { threshold: 0.3 });
+  document.querySelectorAll('[id]').forEach(el => observer.observe(el));
+})();
+</script>
