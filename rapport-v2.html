@@ -1,0 +1,1233 @@
+<title>ラポール形成指標ガイド v2.0 — New Create メンター育成</title>
+<style>
+/* ── Token layer ── */
+:root {
+  --bg:        #F8FAFC;
+  --bg-card:   #FFFFFF;
+  --bg-sub:    #EFF4FB;
+  --border:    #CBD5E1;
+  --text:      #0F172A;
+  --text-muted:#64748B;
+  --nav-bg:    #1B2B4B;
+  --nav-text:  #E2E8F0;
+  --accent:    #2563EB;
+  --accent-lt: #DBEAFE;
+  --ok:        #16A34A;
+  --ok-lt:     #DCFCE7;
+  --ng:        #DC2626;
+  --ng-lt:     #FEE2E2;
+  --warn:      #D97706;
+  --warn-lt:   #FEF3C7;
+  --ch1:       #7C3AED;  --ch1-lt: #EDE9FE;
+  --ch2:       #0891B2;  --ch2-lt: #CFFAFE;
+  --ch3:       #059669;  --ch3-lt: #D1FAE5;
+  --ch4:       #DC2626;  --ch4-lt: #FEE2E2;
+  --ch5:       #D97706;  --ch5-lt: #FEF3C7;
+  --ch6:       #7C3AED;  --ch6-lt: #EDE9FE;
+  --ch7:       #BE185D;  --ch7-lt: #FCE7F3;
+  --ch8:       #0F766E;  --ch8-lt: #CCFBF1;
+  --shadow:    0 1px 3px rgba(0,0,0,.1), 0 1px 2px rgba(0,0,0,.06);
+  --radius:    10px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg:#0A0F1A; --bg-card:#131C2F; --bg-sub:#1A2540; --border:#2D3D5C;
+    --text:#E2E8F0; --text-muted:#94A3B8; --nav-bg:#0A0F1A; --nav-text:#CBD5E1;
+    --accent:#60A5FA; --accent-lt:#1E3A5F;
+    --ok:#4ADE80; --ok-lt:#14532D; --ng:#F87171; --ng-lt:#7F1D1D;
+    --warn:#FCD34D; --warn-lt:#78350F;
+    --ch1:#A78BFA; --ch1-lt:#2E1065; --ch2:#22D3EE; --ch2-lt:#0C4A6E;
+    --ch3:#34D399; --ch3-lt:#064E3B; --ch4:#F87171; --ch4-lt:#7F1D1D;
+    --ch5:#FCD34D; --ch5-lt:#78350F; --ch6:#A78BFA; --ch6-lt:#2E1065;
+    --ch7:#F472B6; --ch7-lt:#831843; --ch8:#2DD4BF; --ch8-lt:#134E4A;
+    --shadow:0 1px 3px rgba(0,0,0,.4);
+  }
+}
+:root[data-theme="dark"] {
+  --bg:#0A0F1A; --bg-card:#131C2F; --bg-sub:#1A2540; --border:#2D3D5C;
+  --text:#E2E8F0; --text-muted:#94A3B8; --nav-bg:#0A0F1A; --nav-text:#CBD5E1;
+  --accent:#60A5FA; --accent-lt:#1E3A5F;
+  --ok:#4ADE80; --ok-lt:#14532D; --ng:#F87171; --ng-lt:#7F1D1D;
+  --warn:#FCD34D; --warn-lt:#78350F;
+  --ch1:#A78BFA; --ch1-lt:#2E1065; --ch2:#22D3EE; --ch2-lt:#0C4A6E;
+  --ch3:#34D399; --ch3-lt:#064E3B; --ch4:#F87171; --ch4-lt:#7F1D1D;
+  --ch5:#FCD34D; --ch5-lt:#78350F; --ch6:#A78BFA; --ch6-lt:#2E1065;
+  --ch7:#F472B6; --ch7-lt:#831843; --ch8:#2DD4BF; --ch8-lt:#134E4A;
+  --shadow:0 1px 3px rgba(0,0,0,.4);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; scroll-behavior: smooth; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Noto Sans JP", "Yu Gothic UI", sans-serif;
+  background: var(--bg); color: var(--text); line-height: 1.75;
+}
+
+.page-wrap { display: grid; grid-template-columns: 240px 1fr; min-height: 100vh; }
+
+/* Sidebar */
+.sidebar {
+  position: sticky; top: 0; height: 100vh; overflow-y: auto;
+  background: var(--nav-bg); color: var(--nav-text);
+  padding: 24px 0; display: flex; flex-direction: column;
+  scrollbar-width: thin; scrollbar-color: rgba(255,255,255,.2) transparent;
+}
+.sidebar-logo { padding: 0 20px 20px; border-bottom: 1px solid rgba(255,255,255,.1); margin-bottom: 12px; }
+.sidebar-logo .logo-label { font-size:.6rem; letter-spacing:.14em; text-transform:uppercase; opacity:.45; margin-bottom:4px; }
+.sidebar-logo .logo-title { font-size:.9rem; font-weight:700; line-height:1.3; }
+.sidebar-logo .logo-ver { font-size:.7rem; opacity:.5; margin-top:4px; }
+.nav-section { padding:12px 20px 4px; font-size:.58rem; letter-spacing:.14em; text-transform:uppercase; opacity:.35; }
+.nav-link {
+  display:flex; align-items:center; gap:9px; padding:6px 20px;
+  font-size:.81rem; color:var(--nav-text); text-decoration:none; opacity:.65;
+  border-left:3px solid transparent; transition:opacity .15s,border-color .15s,background .15s;
+}
+.nav-link:hover, .nav-link.active { opacity:1; background:rgba(255,255,255,.07); border-left-color:var(--accent); }
+.nav-chip { font-size:.62rem; font-weight:700; padding:1px 6px; border-radius:4px; background:rgba(255,255,255,.12); letter-spacing:.04em; }
+.sidebar-footer { margin-top:auto; padding:16px 20px 8px; border-top:1px solid rgba(255,255,255,.08); }
+.theme-toggle {
+  background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.15); border-radius:6px;
+  color:var(--nav-text); font-size:.75rem; padding:6px 12px; cursor:pointer;
+  width:100%; text-align:left; display:flex; align-items:center; gap:6px;
+}
+.theme-toggle:hover { background:rgba(255,255,255,.14); }
+
+/* Main */
+main { padding:40px 52px; max-width:920px; }
+
+/* Hero */
+.hero { margin-bottom:52px; padding-bottom:36px; border-bottom:1px solid var(--border); }
+.hero-eyebrow { font-size:.68rem; letter-spacing:.16em; text-transform:uppercase; color:var(--accent); font-weight:600; margin-bottom:10px; }
+.hero h1 { font-size:2rem; font-weight:800; line-height:1.2; margin-bottom:14px; }
+.hero-sub { font-size:.95rem; color:var(--text-muted); max-width:560px; line-height:1.65; }
+.hero-meta { margin-top:20px; display:flex; flex-wrap:wrap; gap:8px; }
+.badge {
+  display:inline-flex; align-items:center; gap:4px; padding:3px 10px;
+  border-radius:999px; font-size:.71rem; font-weight:600;
+  background:var(--bg-sub); color:var(--text-muted); border:1px solid var(--border);
+}
+.badge.wip { background:var(--warn-lt); color:var(--warn); border-color:var(--warn); }
+.badge.new { background:var(--ok-lt); color:var(--ok); border-color:var(--ok); }
+
+/* Chapter */
+.chapter { margin-bottom:64px; scroll-margin-top:24px; }
+.chapter-header { display:flex; align-items:center; gap:14px; margin-bottom:28px; padding-bottom:16px; border-bottom:2px solid var(--border); }
+.ch-num { font-size:.68rem; font-weight:800; letter-spacing:.12em; text-transform:uppercase; padding:4px 10px; border-radius:5px; flex-shrink:0; }
+.chapter-header h2 { font-size:1.45rem; font-weight:800; line-height:1.25; }
+
+.ch-01 .ch-num { background:var(--ch1-lt); color:var(--ch1); }
+.ch-01 .chapter-header { border-bottom-color:var(--ch1); }
+.ch-02 .ch-num { background:var(--ch2-lt); color:var(--ch2); }
+.ch-02 .chapter-header { border-bottom-color:var(--ch2); }
+.ch-03 .ch-num { background:var(--ch3-lt); color:var(--ch3); }
+.ch-03 .chapter-header { border-bottom-color:var(--ch3); }
+.ch-04 .ch-num { background:var(--ch4-lt); color:var(--ch4); }
+.ch-04 .chapter-header { border-bottom-color:var(--ch4); }
+.ch-05 .ch-num { background:var(--ch5-lt); color:var(--ch5); }
+.ch-05 .chapter-header { border-bottom-color:var(--ch5); }
+.ch-06 .ch-num { background:var(--ch6-lt); color:var(--ch6); }
+.ch-06 .chapter-header { border-bottom-color:var(--ch6); }
+.ch-07 .ch-num { background:var(--ch7-lt); color:var(--ch7); }
+.ch-07 .chapter-header { border-bottom-color:var(--ch7); }
+.ch-08 .ch-num { background:var(--ch8-lt); color:var(--ch8); }
+.ch-08 .chapter-header { border-bottom-color:var(--ch8); }
+
+/* Cards */
+.card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:22px 26px; margin-bottom:20px; box-shadow:var(--shadow); }
+.card-title { font-size:.78rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--text-muted); margin-bottom:14px; display:flex; align-items:center; gap:7px; }
+.section-label { font-size:.75rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--text-muted); margin:28px 0 12px; display:flex; align-items:center; gap:6px; }
+
+/* Def box */
+.def-box { background:var(--bg-card); border:1px solid var(--border); border-left:4px solid var(--accent); border-radius:var(--radius); padding:22px 26px; margin-bottom:24px; box-shadow:var(--shadow); }
+.def-box .def-word { font-size:.65rem; letter-spacing:.14em; text-transform:uppercase; color:var(--accent); font-weight:700; margin-bottom:8px; }
+.def-box .def-main { font-size:1.1rem; font-weight:700; margin-bottom:10px; line-height:1.4; }
+.def-box .def-sub { font-size:.875rem; color:var(--text-muted); line-height:1.7; }
+
+/* Sign chips */
+.sign-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:10px; margin-bottom:20px; }
+.sign-chip { background:var(--bg-sub); border:1px solid var(--border); border-radius:8px; padding:12px 14px; font-size:.84rem; line-height:1.5; display:flex; align-items:flex-start; gap:8px; }
+.sign-chip .sc-icon { font-size:1.1rem; flex-shrink:0; margin-top:1px; }
+.sign-chip.ok { border-left:3px solid var(--ok); }
+.sign-chip.warn { border-left:3px solid var(--warn); }
+
+/* Type rapport table */
+.type-rapport-list { display:flex; flex-direction:column; gap:12px; margin-bottom:24px; }
+.tr-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow); }
+.tr-header { display:flex; align-items:center; gap:12px; padding:12px 18px; background:var(--bg-sub); border-bottom:1px solid var(--border); cursor:pointer; user-select:none; }
+.tr-tag { font-size:.65rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:var(--accent); min-width:56px; }
+.tr-name { font-size:.9rem; font-weight:700; flex:1; }
+.tr-signal { font-size:.75rem; color:var(--text-muted); font-style:italic; }
+.tr-arrow { font-size:.8rem; color:var(--text-muted); transition:transform .2s; }
+.tr-card.open .tr-arrow { transform:rotate(180deg); }
+.tr-body { display:none; padding:16px 18px; display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; }
+.tr-body.collapsed { display:none; }
+.tr-col-label { font-size:.65rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; margin-bottom:6px; }
+.tr-col-body { font-size:.82rem; line-height:1.6; }
+.col-pattern .tr-col-label { color:var(--accent); }
+.col-open .tr-col-label { color:var(--ok); }
+.col-ng .tr-col-label { color:var(--ng); }
+
+/* Layer blocks */
+.layer-block { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; margin-bottom:16px; box-shadow:var(--shadow); }
+.layer-header { padding:14px 20px; font-size:.88rem; font-weight:700; display:flex; align-items:center; gap:10px; }
+.layer-body { padding:14px 20px; border-top:1px solid var(--border); font-size:.855rem; line-height:1.7; }
+
+/* Session flow */
+.session-flow { position:relative; margin-bottom:24px; }
+.session-flow::before { content:""; position:absolute; left:28px; top:0; bottom:0; width:2px; background:var(--border); }
+.sf-item { display:flex; gap:18px; margin-bottom:24px; position:relative; }
+.sf-num { width:56px; height:56px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:.8rem; font-weight:800; flex-shrink:0; position:relative; z-index:1; }
+.sf-body { flex:1; padding-top:8px; }
+.sf-session { font-size:.78rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; margin-bottom:4px; }
+.sf-title { font-size:1rem; font-weight:700; margin-bottom:8px; }
+.sf-desc { font-size:.855rem; color:var(--text-muted); line-height:1.65; margin-bottom:10px; }
+.sf-signals { display:flex; flex-wrap:wrap; gap:6px; }
+.sf-signal { font-size:.76rem; padding:3px 9px; border-radius:5px; background:var(--bg-sub); border:1px solid var(--border); line-height:1.4; }
+.sf-signal.lang { background:var(--ok-lt); color:var(--ok); border-color:var(--ok); }
+.sf-signal.body { background:var(--ch2-lt); color:var(--ch2); border-color:var(--ch2); }
+.s1 .sf-num { background:var(--ch1-lt); color:var(--ch1); } .s1 .sf-session { color:var(--ch1); }
+.s2 .sf-num { background:var(--ch2-lt); color:var(--ch2); } .s2 .sf-session { color:var(--ch2); }
+.s3 .sf-num { background:var(--ch3-lt); color:var(--ch3); } .s3 .sf-session { color:var(--ch3); }
+.s4 .sf-num { background:var(--ch4-lt); color:var(--ch4); } .s4 .sf-session { color:var(--ch4); }
+.s5 .sf-num { background:var(--ch5-lt); color:var(--ch5); } .s5 .sf-session { color:var(--ch5); }
+
+/* Checklist */
+.cl-group { margin-bottom:20px; }
+.cl-group-label { font-size:.72rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--text-muted); margin-bottom:10px; display:flex; align-items:center; gap:6px; }
+.cl-item { display:flex; align-items:flex-start; gap:10px; padding:9px 12px; margin-bottom:5px; border-radius:7px; background:var(--bg-card); border:1px solid var(--border); font-size:.85rem; line-height:1.5; cursor:pointer; transition:background .1s; }
+.cl-item:hover { background:var(--bg-sub); }
+.cl-item input[type="checkbox"] { margin-top:2px; width:16px; height:16px; flex-shrink:0; cursor:pointer; accent-color:var(--ok); }
+.cl-item.checked { opacity:.55; text-decoration:line-through; text-decoration-color:var(--text-muted); }
+.cl-item .cl-sub { font-size:.77rem; color:var(--text-muted); margin-top:3px; display:block; }
+
+/* Q bank */
+.q-bank { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; margin-bottom:20px; box-shadow:var(--shadow); }
+.q-bank-header { padding:14px 20px; background:var(--bg-sub); border-bottom:1px solid var(--border); font-size:.78rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--text-muted); display:flex; align-items:center; gap:7px; }
+.q-item { padding:12px 20px; border-bottom:1px solid var(--border); font-size:.875rem; line-height:1.6; display:flex; gap:12px; align-items:flex-start; }
+.q-item:last-child { border-bottom:none; }
+.q-num { font-size:.7rem; font-weight:700; color:var(--text-muted); flex-shrink:0; width:22px; padding-top:2px; }
+.q-item .q-note { font-size:.77rem; color:var(--text-muted); margin-top:4px; display:block; }
+
+/* Lang change */
+.lang-change { display:grid; grid-template-columns:1fr auto 1fr; gap:10px; align-items:center; margin-bottom:10px; padding:12px 14px; background:var(--bg-card); border:1px solid var(--border); border-radius:8px; }
+.lang-before { font-size:.84rem; padding:6px 10px; background:var(--ng-lt); color:var(--ng); border-radius:5px; line-height:1.4; text-align:center; }
+.lang-arrow { font-size:1.1rem; color:var(--ok); text-align:center; }
+.lang-after { font-size:.84rem; padding:6px 10px; background:var(--ok-lt); color:var(--ok); border-radius:5px; line-height:1.4; text-align:center; }
+
+/* Note boxes */
+.note-box { border-radius:8px; padding:14px 18px; margin-bottom:16px; font-size:.855rem; line-height:1.65; display:flex; gap:10px; }
+.note-box.info { background:var(--accent-lt); border:1px solid color-mix(in srgb,var(--accent) 25%,transparent); }
+.note-box.warn { background:var(--warn-lt); border:1px solid color-mix(in srgb,var(--warn) 30%,transparent); }
+.note-box.ok   { background:var(--ok-lt);   border:1px solid color-mix(in srgb,var(--ok) 30%,transparent); }
+.note-box .nb-icon { font-size:1.1rem; flex-shrink:0; margin-top:1px; }
+
+/* Disclosure */
+.disclosure-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:12px; margin-bottom:24px; }
+.disclosure-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:16px 18px; box-shadow:var(--shadow); }
+.disclosure-card .dc-num { font-size:.65rem; font-weight:800; letter-spacing:.1em; color:var(--accent); margin-bottom:5px; }
+.disclosure-card .dc-title { font-size:.92rem; font-weight:700; margin-bottom:7px; }
+.disclosure-card .dc-body { font-size:.81rem; color:var(--text-muted); line-height:1.6; }
+.disclosure-card .dc-example { margin-top:8px; font-size:.78rem; padding:7px 10px; background:var(--bg-sub); border-radius:5px; font-style:italic; line-height:1.5; border:1px solid var(--border); }
+
+/* Zoom grid */
+.zoom-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:12px; margin-bottom:20px; }
+.zoom-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:16px 18px; box-shadow:var(--shadow); }
+.zoom-card .zc-icon { font-size:1.5rem; margin-bottom:8px; display:block; }
+.zoom-card .zc-title { font-size:.92rem; font-weight:700; margin-bottom:6px; }
+.zoom-card .zc-do { font-size:.8rem; padding:6px 10px; background:var(--ok-lt); color:var(--ok); border-radius:5px; margin-bottom:6px; line-height:1.5; border:1px solid color-mix(in srgb,var(--ok) 30%,transparent); }
+.zoom-card .zc-ng { font-size:.8rem; padding:6px 10px; background:var(--ng-lt); color:var(--ng); border-radius:5px; line-height:1.5; border:1px solid color-mix(in srgb,var(--ng) 30%,transparent); }
+
+/* Pitfall */
+.pitfall-item { background:var(--bg-card); border:1px solid var(--border); border-left:4px solid var(--ng); border-radius:var(--radius); padding:16px 20px; margin-bottom:10px; box-shadow:var(--shadow); }
+.pitfall-item .pi-label { font-size:.67rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--ng); margin-bottom:6px; }
+.pitfall-item .pi-title { font-size:.92rem; font-weight:700; margin-bottom:6px; }
+.pitfall-item .pi-body { font-size:.84rem; color:var(--text-muted); line-height:1.65; margin-bottom:10px; }
+.pitfall-item .pi-fix { font-size:.82rem; padding:8px 12px; background:var(--ok-lt); border:1px solid color-mix(in srgb,var(--ok) 25%,transparent); border-radius:6px; color:var(--ok); line-height:1.6; }
+.pitfall-item .pi-fix strong { font-size:.67rem; text-transform:uppercase; letter-spacing:.08em; display:block; margin-bottom:3px; }
+
+/* Responsive */
+@media (max-width:768px) {
+  .page-wrap { grid-template-columns:1fr; }
+  .sidebar { position:static; height:auto; }
+  main { padding:24px 20px; }
+  .tr-body { grid-template-columns:1fr; }
+  .zoom-grid, .disclosure-grid { grid-template-columns:1fr; }
+  .lang-change { grid-template-columns:1fr; gap:6px; }
+  .lang-arrow { transform:rotate(90deg); }
+}
+@media (prefers-reduced-motion:reduce) { *, *::before, *::after { transition:none !important; } }
+</style>
+
+<div class="page-wrap">
+<nav class="sidebar" aria-label="目次">
+  <div class="sidebar-logo">
+    <div class="logo-label">New Create</div>
+    <div class="logo-title">ラポール形成<br>指標ガイド</div>
+    <div class="logo-ver">v2.0 — 実例ベース改訂版</div>
+  </div>
+  <a href="#ch01" class="nav-link"><span class="nav-chip" style="background:rgba(124,58,237,.25);color:#A78BFA">01</span>ラポールとは</a>
+  <a href="#ch02" class="nav-link"><span class="nav-chip" style="background:rgba(8,145,178,.25);color:#22D3EE">02</span>受講生を読む</a>
+  <a href="#ch03" class="nav-link"><span class="nav-chip" style="background:rgba(5,150,105,.25);color:#34D399">03</span>1回目の入口</a>
+  <a href="#ch04" class="nav-link"><span class="nav-chip" style="background:rgba(220,38,38,.25);color:#F87171">04</span>回を重ねるごとの変化</a>
+  <a href="#ch05" class="nav-link"><span class="nav-chip" style="background:rgba(217,119,6,.25);color:#FCD34D">05</span>メンターの自己開示</a>
+  <a href="#ch06" class="nav-link"><span class="nav-chip" style="background:rgba(124,58,237,.25);color:#A78BFA">06</span>非言語・Zoom</a>
+  <a href="#ch07" class="nav-link"><span class="nav-chip" style="background:rgba(190,24,93,.25);color:#F472B6">07</span>落とし穴</a>
+  <a href="#ch08" class="nav-link"><span class="nav-chip" style="background:rgba(15,118,110,.25);color:#2DD4BF">08</span>振り返り指標</a>
+  <div class="sidebar-footer">
+    <button class="theme-toggle" onclick="toggleTheme()">🌗 テーマ切り替え</button>
+  </div>
+</nav>
+
+<main>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">New Create — メンター育成プログラム</div>
+  <h1>ラポール形成指標ガイド</h1>
+  <p class="hero-sub">11名の受講生との実際の1on1から引き出したパターン集。「知っていること」の解像度を上げる視点で読んでください。成功の定義ではなく、現場で起きていることの整理です。</p>
+  <div class="hero-meta">
+    <span class="badge">v2.0</span>
+    <span class="badge new">実例ベース改訂</span>
+    <span class="badge wip">⚠ 一部継続更新中</span>
+  </div>
+</div>
+
+<!-- ══ CH01 ══ -->
+<section class="chapter ch-01" id="ch01">
+  <div class="chapter-header">
+    <span class="ch-num">CH 01</span>
+    <h2>ラポールとは</h2>
+  </div>
+
+  <div class="def-box">
+    <div class="def-word">定義</div>
+    <div class="def-main">「この人と話していると、自分でも気づいていなかったことが出てくる」という状態</div>
+    <div class="def-sub">
+      ラポールは"仲良くなること"や"信頼される人になること"ではない。受講生が<strong>許可を待たずに自分から話し始め、言葉が変わり、話の深さが増していく</strong>プロセスの総体。どんな良質な問いかけも、この土台がなければ機能しない。<br><br>
+      「話しやすいです」はラポールの入り口に過ぎない。「この人と話すと自分が整理される」に至るかどうかが、ラポールの本質的な成立ライン。
+    </div>
+  </div>
+
+  <div class="section-label">📊 ラポールが育っているサイン — 受講生の言葉・行動から読む</div>
+  <div class="sign-grid">
+    <div class="sign-chip ok"><span class="sc-icon">💬</span><span>聞かれる前に自分から話し始める</span></div>
+    <div class="sign-chip ok"><span class="sc-icon">🔄</span><span>「大丈夫です」→「実はしんどくて」に変わる</span></div>
+    <div class="sign-chip ok"><span class="sc-icon">⏰</span><span>セッションに少し早く入ってくる</span></div>
+    <div class="sign-chip ok"><span class="sc-icon">🧩</span><span>セッション外でLINEや共有が自然に来る</span></div>
+    <div class="sign-chip ok"><span class="sc-icon">🪞</span><span>家族・職場・友人との関係について話し始める</span></div>
+    <div class="sign-chip ok"><span class="sc-icon">✍️</span><span>「私って〇〇な人間なんですよね」と自分のパターンを自分の言葉にし始める</span></div>
+    <div class="sign-chip ok"><span class="sc-icon">😄</span><span>笑いやユーモアが出てくる</span></div>
+    <div class="sign-chip ok"><span class="sc-icon">🤔</span><span>「〜できるかな」→「やってみます」に変わる</span></div>
+    <div class="sign-chip warn"><span class="sc-icon">⏸️</span><span>沈黙が"気まずい"ではなく"考え中"になる</span></div>
+    <div class="sign-chip warn"><span class="sc-icon">🔍</span><span>メンターとの対話で気づいたことを、他の場面でも試したと報告してくる</span></div>
+  </div>
+
+  <div class="note-box info">
+    <span class="nb-icon">💡</span>
+    <div>
+      <strong>ラポール ≠ 好感度</strong><br>
+      「いい人だな」で止まるメンターと「この人と話すと自分が変わる」に至るメンターの差は、受講生が<strong>自分でも気づいていなかったことを言葉にできたかどうか</strong>にある。セッション後に受講生の中に何かが残っているかを問い続けることが、ラポール形成の核心。
+    </div>
+  </div>
+
+  <div class="section-label">📈 ラポールの深まり方 — 回を重ねるごとに起きること</div>
+  <div class="card">
+    <div class="card-title"><span>🏔️</span> 段階的な変化のイメージ</div>
+    <div style="display:grid;gap:8px;">
+      <div style="display:flex;gap:12px;align-items:center;padding:10px 14px;background:var(--bg-sub);border-radius:7px;border:1px solid var(--border);">
+        <div style="font-weight:800;font-size:.78rem;color:var(--ch1);width:80px;flex-shrink:0;line-height:1.4;">1回目<br><span style="font-size:.65rem;color:var(--text-muted);">様子を見ている</span></div>
+        <div style="font-size:.84rem;">「どう振る舞えばいいか」を探っている。正しいことを言わなければという緊張がある</div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:center;padding:10px 14px;background:var(--bg-sub);border-radius:7px;border:1px solid var(--border);">
+        <div style="font-weight:800;font-size:.78rem;color:var(--ch2);width:80px;flex-shrink:0;line-height:1.4;">2〜3回目<br><span style="font-size:.65rem;color:var(--text-muted);">感情が出始める</span></div>
+        <div style="font-size:.84rem;">「なんか、モヤモヤするんですよね」「胸がつかえる感じ」など体で感じていることを言葉にし始める</div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:center;padding:10px 14px;background:var(--bg-sub);border-radius:7px;border:1px solid var(--border);">
+        <div style="font-weight:800;font-size:.78rem;color:var(--ch3);width:80px;flex-shrink:0;line-height:1.4;">3〜4回目<br><span style="font-size:.65rem;color:var(--text-muted);">核心が来る</span></div>
+        <div style="font-size:.84rem;">家族・過去の経験・人間関係の根っこにあるパターンなど「誰にも言っていなかったこと」が出てくる</div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:center;padding:10px 14px;background:var(--bg-sub);border-radius:7px;border:1px solid var(--border);">
+        <div style="font-weight:800;font-size:.78rem;color:var(--ch5);width:80px;flex-shrink:0;line-height:1.4;">5回目〜<br><span style="font-size:.65rem;color:var(--text-muted);">外に広がる</span></div>
+        <div style="font-size:.84rem;">1on1で整理したことを、家族や職場との関係でも自分で試し始める。「〇〇に話してみたんですよ」という報告が来る</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CH02 ══ -->
+<section class="chapter ch-02" id="ch02">
+  <div class="chapter-header">
+    <span class="ch-num">CH 02</span>
+    <h2>受講生を読む — 12タイプとラポールの関係</h2>
+  </div>
+
+  <div class="note-box info">
+    <span class="nb-icon">🔬</span>
+    <div>
+      <strong>12タイプをラポール視点で見る</strong><br>
+      12タイプはすでに共通認識として持っている。ここでは「そのタイプの受講生のラポールはどう展開するか」だけを追加する。<strong>ラポール上の出方・開きやすい入り口・やると閉じること</strong>の3点を各タイプに紐づけて読む。
+    </div>
+  </div>
+
+  <div class="section-label">📊 12タイプ × ラポールの出方</div>
+  <div style="font-size:.8rem;color:var(--text-muted);margin-bottom:14px;">各タイプ名をクリックすると詳細が開きます</div>
+
+  <div class="type-rapport-list">
+
+    <!-- 過去思考 -->
+    <div class="tr-card">
+      <div class="tr-header" onclick="toggleTR(this)">
+        <span class="tr-tag">① 過去思考</span>
+        <span class="tr-name">「また失敗するかも」が先に来る</span>
+        <span class="tr-signal">口癖：「また失敗するかも」「前もダメだった」</span>
+        <span class="tr-arrow">▼</span>
+      </div>
+      <div class="tr-body collapsed">
+        <div class="col-pattern">
+          <div class="tr-col-label">ラポール上の出方</div>
+          <div class="tr-col-body">失敗話から入ると急に饒舌になる。「実は前のスクールで…」と過去の話が多い。安心感が生まれると一気に開示する。最初は慎重でも、一度開くと深い話が来る。</div>
+        </div>
+        <div class="col-open">
+          <div class="tr-col-label">開きやすい入り口</div>
+          <div class="tr-col-body">メンター自身の「うまくいかなかった時期」の自己開示。「昔こういう失敗があって」と先に話すと一気に「実は私も…」が来る。</div>
+        </div>
+        <div class="col-ng">
+          <div class="tr-col-label">やると閉じること</div>
+          <div class="tr-col-body">「でも今は大丈夫ですよ」と過去を早期に解決しようとする。過去の話を遮ってポジティブに転換すると、「わかってもらえない」になる。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 未来不安 -->
+    <div class="tr-card">
+      <div class="tr-header" onclick="toggleTR(this)">
+        <span class="tr-tag">② 未来不安</span>
+        <span class="tr-name">「この先大丈夫かな？」が強い</span>
+        <span class="tr-signal">口癖：「この先大丈夫かな」「まだ安定してない…」</span>
+        <span class="tr-arrow">▼</span>
+      </div>
+      <div class="tr-body collapsed">
+        <div class="col-pattern">
+          <div class="tr-col-label">ラポール上の出方</div>
+          <div class="tr-col-body">リスクの話が多い。「でも不安で」「でも怖くて」が続く。安心材料が積み上がるにつれてラポールも深まる。数字や具体的な見通しを示すと落ち着いて話せるようになる。</div>
+        </div>
+        <div class="col-open">
+          <div class="tr-col-label">開きやすい入り口</div>
+          <div class="tr-col-body">「不安に感じているのは当然で、実際どのくらいのリスクがあるか一緒に数字で見てみましょう」と具体化する。感情を否定せず、根拠のある安心を作る。</div>
+        </div>
+        <div class="col-ng">
+          <div class="tr-col-label">やると閉じること</div>
+          <div class="tr-col-body">「大丈夫ですよ！」と根拠なく励ます。不安を「気にしすぎ」と流す。不安を否定されると、以後は本音を言わなくなる。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 完璧主義 -->
+    <div class="tr-card">
+      <div class="tr-header" onclick="toggleTR(this)">
+        <span class="tr-tag">③ 完璧主義</span>
+        <span class="tr-name">100点で出したい。未完成が苦手</span>
+        <span class="tr-signal">口癖：「納得いかない」「まだ出せない」</span>
+        <span class="tr-arrow">▼</span>
+      </div>
+      <div class="tr-body collapsed">
+        <div class="col-pattern">
+          <div class="tr-col-label">ラポール上の出方</div>
+          <div class="tr-col-body">「ちゃんとした話」しかしようとしない。感情を表に出すことを「甘え」と思っている傾向がある。ラポールが深まると、完璧に見せていた部分の「実はしんどかった」が出てくる。</div>
+        </div>
+        <div class="col-open">
+          <div class="tr-col-label">開きやすい入り口</div>
+          <div class="tr-col-body">「60点で出すことに意味がある」をロジックで先に説明する。メンター自身が「未完成のまま話す」手本を見せる。</div>
+        </div>
+        <div class="col-ng">
+          <div class="tr-col-label">やると閉じること</div>
+          <div class="tr-col-body">「もっとこうすれば」とフィードバックを重ねる。完璧主義に対して完璧を求めるとさらに萎縮する。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 正解待ち -->
+    <div class="tr-card">
+      <div class="tr-header" onclick="toggleTR(this)">
+        <span class="tr-tag">④ 正解待ち</span>
+        <span class="tr-name">「これで合ってるか？」を常に確認したい</span>
+        <span class="tr-signal">口癖：「これで合ってますか？」「次は何をやれば？」</span>
+        <span class="tr-arrow">▼</span>
+      </div>
+      <div class="tr-body collapsed">
+        <div class="col-pattern">
+          <div class="tr-col-label">ラポール上の出方</div>
+          <div class="tr-col-body">メンターへの依存が高まりやすい。「答えをくれる人」として信頼するが、これはラポールではなく依存。本来のラポールは、答えを求めずに「考えを一緒に整理する場」になって初めて成立する。</div>
+        </div>
+        <div class="col-open">
+          <div class="tr-col-label">開きやすい入り口</div>
+          <div class="tr-col-body">「あなたはどう思いますか」を先に聞いてから応答する。自分の意見を持つことへの小さな成功体験を積み重ねる。</div>
+        </div>
+        <div class="col-ng">
+          <div class="tr-col-label">やると閉じること</div>
+          <div class="tr-col-body">すぐに「正解」を渡す。正解を渡し続けると「あなたが言ったからやった」という構造になり、受講生の自己判断が育たない。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 自己価値＝成果 -->
+    <div class="tr-card">
+      <div class="tr-header" onclick="toggleTR(this)">
+        <span class="tr-tag">⑤ 自己価値＝成果</span>
+        <span class="tr-name">結果で自分の価値を判断する</span>
+        <span class="tr-signal">口癖：「自分には才能がない」「結果が出ない」</span>
+        <span class="tr-arrow">▼</span>
+      </div>
+      <div class="tr-body collapsed">
+        <div class="col-pattern">
+          <div class="tr-col-label">ラポール上の出方</div>
+          <div class="tr-col-body">うまくいっているときはオープン、うまくいっていないときに急に閉じる。失敗を話すことを「自分のダメさを見せること」と感じているため、成果が出ていない時期はラポールが一番崩れやすい。</div>
+        </div>
+        <div class="col-open">
+          <div class="tr-col-label">開きやすい入り口</div>
+          <div class="tr-col-body">「結果と人格は別」を繰り返し言葉で示す。うまくいっていない時期こそ「話してくれてよかった」を伝える。</div>
+        </div>
+        <div class="col-ng">
+          <div class="tr-col-label">やると閉じること</div>
+          <div class="tr-col-body">成果が出ていないときに「頑張れば大丈夫」と励ます。結果論で話す（「あのときもっとやれていれば」）。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 比較思考 -->
+    <div class="tr-card">
+      <div class="tr-header" onclick="toggleTR(this)">
+        <span class="tr-tag">⑥ 比較思考</span>
+        <span class="tr-name">他人と自分を頻繁に比較する</span>
+        <span class="tr-signal">口癖：「〇〇さんは凄いのに」「周りに比べて」</span>
+        <span class="tr-arrow">▼</span>
+      </div>
+      <div class="tr-body collapsed">
+        <div class="col-pattern">
+          <div class="tr-col-label">ラポール上の出方</div>
+          <div class="tr-col-body">他の受講生の話題が多い。「自分だけ遅い」「みんなはできているのに」が頻出する。比較の話を一緒に整理してあげると、一気に「実は私が本当に気にしているのは…」という核心が来ることがある。</div>
+        </div>
+        <div class="col-open">
+          <div class="tr-col-label">開きやすい入り口</div>
+          <div class="tr-col-body">「先月の自分と今日を比べたら？」と比較の軸を変える。「あなたの中で変わったこと」を具体的に言語化して返す。</div>
+        </div>
+        <div class="col-ng">
+          <div class="tr-col-label">やると閉じること</div>
+          <div class="tr-col-body">他の受講生の例を出して励ます（「〇〇さんも最初は…」）。比較を更に強化するだけになる。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 安全欲求強め -->
+    <div class="tr-card">
+      <div class="tr-header" onclick="toggleTR(this)">
+        <span class="tr-tag">⑦ 安全欲求強め</span>
+        <span class="tr-name">失敗回避を優先する。安心材料がないと動けない</span>
+        <span class="tr-signal">口癖：「損したくない」「確実な方法なら」</span>
+        <span class="tr-arrow">▼</span>
+      </div>
+      <div class="tr-body collapsed">
+        <div class="col-pattern">
+          <div class="tr-col-label">ラポール上の出方</div>
+          <div class="tr-col-body">最初の3回はラポールが開くのが遅い。メンターへの評価を慎重に続けている。一度「この人は安全だ」と判断すると、それ以降は急にオープンになる。この「安全判定」を早めることがラポール形成の要。</div>
+        </div>
+        <div class="col-open">
+          <div class="tr-col-label">開きやすい入り口</div>
+          <div class="tr-col-body">「次回はこういう話をしましょう」と事前に共有してセッションの予測可能性を上げる。約束したことを必ず守る（小さな約束の積み重ね）。</div>
+        </div>
+        <div class="col-ng">
+          <div class="tr-col-label">やると閉じること</div>
+          <div class="tr-col-body">変化を急かす。「思い切ってやってみましょう」が逆効果になりやすい。変化の安全性をまず示す必要がある。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 行動先行 -->
+    <div class="tr-card">
+      <div class="tr-header" onclick="toggleTR(this)">
+        <span class="tr-tag">⑧ 行動先行</span>
+        <span class="tr-name">とりあえずやる。スピードが早い</span>
+        <span class="tr-signal">口癖：「とりあえずやりました（中身スカスカ）」</span>
+        <span class="tr-arrow">▼</span>
+      </div>
+      <div class="tr-body collapsed">
+        <div class="col-pattern">
+          <div class="tr-col-label">ラポール上の出方</div>
+          <div class="tr-col-body">最初からオープンで話しやすい印象があるが、それはラポールではなくキャラクターである場合が多い。深い話になると「それはちょっと…」と切り替える。内省を促すと初めてラポールが育ち始める。</div>
+        </div>
+        <div class="col-open">
+          <div class="tr-col-label">開きやすい入り口</div>
+          <div class="tr-col-body">「やってみてどうでしたか、内側で何か感じましたか」と振り返りの問いを意図的に入れる。行動の速さを肯定しつつ、内省の時間を設計する。</div>
+        </div>
+        <div class="col-ng">
+          <div class="tr-col-label">やると閉じること</div>
+          <div class="tr-col-body">行動量の話ばかりで内省を飛ばす。「よく動けてますね」だけで終わると、深い話が来ない構造になる。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 思考過多 -->
+    <div class="tr-card">
+      <div class="tr-header" onclick="toggleTR(this)">
+        <span class="tr-tag">⑨ 思考過多</span>
+        <span class="tr-name">考えすぎる。情報整理に時間がかかる</span>
+        <span class="tr-signal">口癖：「もっと調べてから」「整理がつかない」</span>
+        <span class="tr-arrow">▼</span>
+      </div>
+      <div class="tr-body collapsed">
+        <div class="col-pattern">
+          <div class="tr-col-label">ラポール上の出方</div>
+          <div class="tr-col-body">沈黙が長い。考えながら話すので言葉が途切れる。それを「話が苦手」と誤読しないこと。沈黙を埋めずに待つと、良質な言葉が来る。ラポールが育つにつれて沈黙後の言葉が深くなる。</div>
+        </div>
+        <div class="col-open">
+          <div class="tr-col-label">開きやすい入り口</div>
+          <div class="tr-col-body">「ゆっくり考えていいですよ」と明示する。「今整理中ですか？」と聞いて待つ許可を作る。</div>
+        </div>
+        <div class="col-ng">
+          <div class="tr-col-label">やると閉じること</div>
+          <div class="tr-col-body">沈黙を埋めて選択肢を先に出す。「たとえば〜はどうですか」と先回りすると、思考が止まり受動的になる。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 環境依存 -->
+    <div class="tr-card">
+      <div class="tr-header" onclick="toggleTR(this)">
+        <span class="tr-tag">⑩ 環境依存</span>
+        <span class="tr-name">周囲の影響を強く受ける。環境が変わるとブレる</span>
+        <span class="tr-signal">口癖：「あの場所ならできた」「周りが…」</span>
+        <span class="tr-arrow">▼</span>
+      </div>
+      <div class="tr-body collapsed">
+        <div class="col-pattern">
+          <div class="tr-col-label">ラポール上の出方</div>
+          <div class="tr-col-body">メンターとの1on1という「良い環境」の中ではよく話す。ただし環境が変わると（生活の変化、職場の問題など）急に話せなくなる。ラポールの継続には「環境が変わっても話せる場」という安定感を作ることが重要。</div>
+        </div>
+        <div class="col-open">
+          <div class="tr-col-label">開きやすい入り口</div>
+          <div class="tr-col-body">「どんな環境や状況のときに一番動けますか」と環境の話を切り口にする。場所・時間・人の条件を一緒に特定する。</div>
+        </div>
+        <div class="col-ng">
+          <div class="tr-col-label">やると閉じること</div>
+          <div class="tr-col-body">「環境のせいにしている」と捉えて個人の意志力の話に持っていく。環境依存を否定すると防御的になる。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 自己流固執 -->
+    <div class="tr-card">
+      <div class="tr-header" onclick="toggleTR(this)">
+        <span class="tr-tag">⑪ 自己流固執</span>
+        <span class="tr-name">自分のやり方にこだわる。フィードバックを取り入れにくい</span>
+        <span class="tr-signal">口癖：「自分なりにはやってる」「でも私は…」</span>
+        <span class="tr-arrow">▼</span>
+      </div>
+      <div class="tr-body collapsed">
+        <div class="col-pattern">
+          <div class="tr-col-label">ラポール上の出方</div>
+          <div class="tr-col-body">最初は「このメンターは自分を否定しないか」を試している。否定しないと判断すると開き始める。ラポールが育つと「実はこのやり方に自信がなくて」という本音が来ることがある。</div>
+        </div>
+        <div class="col-open">
+          <div class="tr-col-label">開きやすい入り口</div>
+          <div class="tr-col-body">「あなたのやり方でうまくいっていると感じる部分はどこですか」と先に肯定する。成果（数字）を客観的に見せてから改善の話に入る。</div>
+        </div>
+        <div class="col-ng">
+          <div class="tr-col-label">やると閉じること</div>
+          <div class="tr-col-body">最初から「この方法の方がいい」と代替案を押しつける。修正をせかすと防御モードになり、以後フィードバックを受け取らなくなる。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 低自己評価 -->
+    <div class="tr-card">
+      <div class="tr-header" onclick="toggleTR(this)">
+        <span class="tr-tag">⑫ 低自己評価</span>
+        <span class="tr-name">自分を過小評価する。実力より低く見積もる</span>
+        <span class="tr-signal">口癖：「自分なんて」「私にはまだ早い」</span>
+        <span class="tr-arrow">▼</span>
+      </div>
+      <div class="tr-body collapsed">
+        <div class="col-pattern">
+          <div class="tr-col-label">ラポール上の出方</div>
+          <div class="tr-col-body">話してくれているのに「こんな話してよかったかな」と萎縮する。ラポールが育つにつれ「実はこれができるようになって嬉しかった」という小さな自己肯定が出てくる。この変化を見逃さずに言葉にして返す。</div>
+        </div>
+        <div class="col-open">
+          <div class="tr-col-label">開きやすい入り口</div>
+          <div class="tr-col-body">「既にできていること」を可視化して返す。「それってすごいことですよ」ではなく、「それは〇〇ができている証拠ですね」と根拠付きで伝える。</div>
+        </div>
+        <div class="col-ng">
+          <div class="tr-col-label">やると閉じること</div>
+          <div class="tr-col-body">「そんなことないですよ！」と即否定する。低自己評価の感情を否定すると「やっぱりわかってもらえない」になる。まず感情を受け取ってから事実を示す。</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="section-label">🔍 1回目で仮説を立てる問い</div>
+  <div class="note-box info">
+    <span class="nb-icon">💡</span>
+    <div>
+      仮説は「このタイプだ」と確定するためではなく、<strong>最初のアプローチの方向を決めるため</strong>のもの。セッションごとに更新し続ける。「前回と違うな」という違和感が、次のアプローチを変えるタイミング。
+    </div>
+  </div>
+  <div class="q-bank">
+    <div class="q-bank-header"><span>🎯</span>初回で使える、タイプを読むための問い</div>
+    <div class="q-item">
+      <span class="q-num">Q1</span>
+      <div>「今まで一番"やっていて良かった"と思った瞬間を教えてください。」
+        <span class="q-note">→ 成果の話が先か、プロセスや人の話が先かで⑤⑥⑧と①〜④の分岐が見える</span>
+      </div>
+    </div>
+    <div class="q-item">
+      <span class="q-num">Q2</span>
+      <div>「このプログラムに申し込んだ決め手は何でしたか？」
+        <span class="q-note">→ 「変わりたかった」か「安心できそうだった」かで⑦⑦と⑧の違いが出る</span>
+      </div>
+    </div>
+    <div class="q-item">
+      <span class="q-num">Q3</span>
+      <div>「今、一番モヤモヤしていることは何ですか？」
+        <span class="q-note">→ 即座に話せるか、考えてから話すかで⑧と⑨の違い。過去の話が出るか未来の話が出るかで①②の区別</span>
+      </div>
+    </div>
+    <div class="q-item">
+      <span class="q-num">Q4</span>
+      <div>「普段、どんなときに"頑張れる"と感じますか？」
+        <span class="q-note">→ 「誰かと一緒のとき」→⑩環境依存傾向、「結果が出たとき」→⑤自己価値＝成果、「整理できたとき」→⑨思考過多傾向</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CH03 ══ -->
+<section class="chapter ch-03" id="ch03">
+  <div class="chapter-header">
+    <span class="ch-num">CH 03</span>
+    <h2>1回目の入口</h2>
+  </div>
+
+  <div class="note-box info">
+    <span class="nb-icon">🎯</span>
+    <div>
+      <strong>1回目の唯一のゴール：「安心できた」を持ち帰らせる</strong><br>
+      「何かを教える」「課題を設定する」は2回目以降でいい。1回目は<strong>「この人と話すのは安全だ」</strong>という感覚を受講生に持ち帰らせることが全て。
+    </div>
+  </div>
+
+  <div class="section-label">📋 事前準備チェックリスト</div>
+  <div class="cl-group">
+    <div class="cl-group-label">🔍 情報収集・仮説立て</div>
+    <label class="cl-item">
+      <input type="checkbox" onchange="toggleCheck(this)">
+      <span>申し込みフォームを読んで「12タイプの中でどれが近いか」仮説を立てる
+        <span class="cl-sub">「なんとなく読んだ」ではなく、タイプの仮説まで言語化しておく（CH02参照）</span>
+      </span>
+    </label>
+    <label class="cl-item">
+      <input type="checkbox" onchange="toggleCheck(this)">
+      <span>慎重対応スクリーニング7カテゴリを確認し、フラグがある場合は対応方針を決めておく</span>
+    </label>
+    <label class="cl-item">
+      <input type="checkbox" onchange="toggleCheck(this)">
+      <span>今日の1回目で「自分がどこまで聞く側に徹するか」を決めておく
+        <span class="cl-sub">最初の20分は受講生が7割話す構成を意識する</span>
+      </span>
+    </label>
+  </div>
+  <div class="cl-group">
+    <div class="cl-group-label">🖥️ Zoom環境（CH06詳細参照）</div>
+    <label class="cl-item">
+      <input type="checkbox" onchange="toggleCheck(this)">
+      <span>カメラに入ったとき、自分の顔が画面の中央に見えるか確認する</span>
+    </label>
+    <label class="cl-item">
+      <input type="checkbox" onchange="toggleCheck(this)">
+      <span>照明が自分の顔を明るく照らしているか確認する（逆光になっていないか）</span>
+    </label>
+    <label class="cl-item">
+      <input type="checkbox" onchange="toggleCheck(this)">
+      <span>5分前に接続して音声・映像の確認を済ませる</span>
+    </label>
+  </div>
+
+  <div class="section-label">🎬 セッション中の流れ</div>
+  <div class="card">
+    <div class="card-title"><span>🔑</span>開始0〜5分 — 映った瞬間が全て</div>
+    <div class="note-box ok" style="margin-bottom:12px;">
+      <span class="nb-icon">✅</span>
+      <div>
+        <strong>Zoomに映った瞬間、笑顔でいること</strong><br>
+        受講生は接続した瞬間からメンターを評価している。最初の表情が1回目全体のトーンを決める。カメラ越しの最初の笑顔を意識的に作る。
+      </div>
+    </div>
+    <div style="font-size:.87rem;line-height:1.7;">
+      <div style="margin-bottom:8px;">① 受講生の名前を呼んで「今日はよろしくお願いします！」と挨拶する</div>
+      <div style="margin-bottom:8px;">② 「今日どんな気持ちでここに来ましたか？」— 状態確認から入る</div>
+      <div>③ 受講生が話し始めたら、評価も提案もせずまず受け取る</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span>🎙️</span>5〜35分 — 受講生が7割話す時間</div>
+    <div style="font-size:.87rem;line-height:1.7;margin-bottom:14px;">
+      この時間帯にメンターが話しすぎると「教わりにきた」モードになり、ラポールではなく指導関係が先行する。コーチング：ティーチング＝7：3 の意識を持ち続ける。
+    </div>
+    <div class="cl-group" style="margin-bottom:0;">
+      <label class="cl-item">
+        <input type="checkbox" onchange="toggleCheck(this)">
+        <span>相槌は「うんうん」の連打より「なるほど」「そうなんですね」で間を作る</span>
+      </label>
+      <label class="cl-item">
+        <input type="checkbox" onchange="toggleCheck(this)">
+        <span>「それって具体的にどんな場面で感じますか」— 抽象から具体へ降りる問いを入れる</span>
+      </label>
+      <label class="cl-item">
+        <input type="checkbox" onchange="toggleCheck(this)">
+        <span>受講生が使った言葉をそのまま返す（意味を変えない）</span>
+      </label>
+      <label class="cl-item">
+        <input type="checkbox" onchange="toggleCheck(this)">
+        <span>「モヤモヤ」「しんどい」など感情の言葉が出たら「もう少し教えてもらえますか」と掘る</span>
+      </label>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span>🏁</span>35〜45分 — クロージング</div>
+    <div style="display:grid;gap:8px;font-size:.87rem;">
+      <div style="padding:10px 14px;background:var(--bg-sub);border-radius:7px;border:1px solid var(--border);">
+        <strong>「今日話してみて、どんな感じがしましたか」</strong> — 感情フィードバックを取る。「大丈夫でした」で終わらせず、もう一問掘る。
+      </div>
+      <div style="padding:10px 14px;background:var(--bg-sub);border-radius:7px;border:1px solid var(--border);">
+        <strong>「次回までに、一つだけ試してみることを決めておきましょうか」</strong> — 行動は小さく具体的に。「考えておく」より「1回やってみる」。
+      </div>
+      <div style="padding:10px 14px;background:var(--bg-sub);border-radius:7px;border:1px solid var(--border);">
+        <strong>「気になることがあったらLINEしてください」</strong> — セッション外での繋がりへの明示的な招待。
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">📝 セッション後 48時間以内にやること</div>
+  <div class="cl-group">
+    <label class="cl-item">
+      <input type="checkbox" onchange="toggleCheck(this)">
+      <span>今日出てきた「受講生の言葉」を3〜5個メモする
+        <span class="cl-sub">次回のセッションでそのまま返すと「聞いてもらえていた」感が生まれる</span>
+      </span>
+    </label>
+    <label class="cl-item">
+      <input type="checkbox" onchange="toggleCheck(this)">
+      <span>タイプの仮説を更新する
+        <span class="cl-sub">「⑦安全欲求かと思ったが、⑫低自己評価の要素が強かった」など具体的に更新する</span>
+      </span>
+    </label>
+    <label class="cl-item">
+      <input type="checkbox" onchange="toggleCheck(this)">
+      <span>「まだ聞けていないこと」をメモして次回の入り口を決めておく</span>
+    </label>
+  </div>
+</section>
+
+<!-- ══ CH04 ══ -->
+<section class="chapter ch-04" id="ch04">
+  <div class="chapter-header">
+    <span class="ch-num">CH 04</span>
+    <h2>回を重ねるごとの変化</h2>
+  </div>
+
+  <div class="section-label">📈 セッション別 変化のパターン</div>
+  <div class="session-flow">
+    <div class="sf-item s1">
+      <div class="sf-num">1</div>
+      <div class="sf-body">
+        <div class="sf-session">1回目</div>
+        <div class="sf-title">様子見・確認の時間</div>
+        <div class="sf-desc">「どう振る舞うべきか」を探っている。正しいことを言わなければという感覚が強い。メンターへの評価が続いている。</div>
+        <div class="sf-signals">
+          <span class="sf-signal">「大丈夫です」</span>
+          <span class="sf-signal">問われてから話す</span>
+          <span class="sf-signal">返答が短い</span>
+        </div>
+      </div>
+    </div>
+    <div class="sf-item s2">
+      <div class="sf-num">2</div>
+      <div class="sf-body">
+        <div class="sf-session">2〜3回目</div>
+        <div class="sf-title">感情が出始める</div>
+        <div class="sf-desc">「なんか、モヤモヤするんですよね」「胸がつかえる感じ」など体で感じていることを言葉にし始める。これは大きな転換点で、見逃さずに拾うことが重要。</div>
+        <div class="sf-signals">
+          <span class="sf-signal lang">体で感じていることを言葉にし始める</span>
+          <span class="sf-signal lang">「実は…」が始まる</span>
+          <span class="sf-signal body">表情が柔らかくなる</span>
+        </div>
+      </div>
+    </div>
+    <div class="sf-item s3">
+      <div class="sf-num">3</div>
+      <div class="sf-body">
+        <div class="sf-session">3〜4回目</div>
+        <div class="sf-title">核心が来る</div>
+        <div class="sf-desc">家族・過去の失敗・人間関係の根っこにあるパターンなど、「誰にも言っていなかったこと」が出てくる。この段階でメンターが動揺したり評価したりすると閉じる。</div>
+        <div class="sf-signals">
+          <span class="sf-signal lang">家族・過去の話が出る</span>
+          <span class="sf-signal lang">「実はずっと…」</span>
+          <span class="sf-signal">「こんなこと初めて言った」</span>
+        </div>
+      </div>
+    </div>
+    <div class="sf-item s4">
+      <div class="sf-num">4</div>
+      <div class="sf-body">
+        <div class="sf-session">4〜5回目</div>
+        <div class="sf-title">自分のパターンを自分の言葉にし始める</div>
+        <div class="sf-desc">「私って〇〇な人間なんですよね」と自分のパターンを自分で言語化し始める。これはラポールが深まったサイン。メンターはこの言葉を奪わず、大切に返す。</div>
+        <div class="sf-signals">
+          <span class="sf-signal lang">自分のパターンを自分の言葉で言い始める</span>
+          <span class="sf-signal lang">「前回の話ですが」と自発的に続く</span>
+        </div>
+      </div>
+    </div>
+    <div class="sf-item s5">
+      <div class="sf-num">5</div>
+      <div class="sf-body">
+        <div class="sf-session">5回目〜</div>
+        <div class="sf-title">他の人間関係でも試し始める</div>
+        <div class="sf-desc">1on1で整理したことを、家族・職場・友人との関係で自分から試し始める。「〇〇に話してみたんですよ」という報告はラポールが日常に根付いたサイン。</div>
+        <div class="sf-signals">
+          <span class="sf-signal lang">他の人間関係で試したと報告してくる</span>
+          <span class="sf-signal lang">セッション外での自発的な連絡</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">🗣️ 言葉の変化 — これが見えたら深まっている</div>
+  <div class="lang-change">
+    <div class="lang-before">「〜できるかな…」</div>
+    <div class="lang-arrow">→</div>
+    <div class="lang-after">「やってみます / できそう」</div>
+  </div>
+  <div class="lang-change">
+    <div class="lang-before">「大丈夫です」</div>
+    <div class="lang-arrow">→</div>
+    <div class="lang-after">「苦しいです / 怖いです」</div>
+  </div>
+  <div class="lang-change">
+    <div class="lang-before">「わかりません」で終わる</div>
+    <div class="lang-arrow">→</div>
+    <div class="lang-after">「わからないけど、たぶん…」と続ける</div>
+  </div>
+  <div class="lang-change">
+    <div class="lang-before">問われてから話す</div>
+    <div class="lang-arrow">→</div>
+    <div class="lang-after">聞かれる前に自分から話し始める</div>
+  </div>
+  <div class="lang-change">
+    <div class="lang-before">「〜が大事ですよね」一般論で話す</div>
+    <div class="lang-arrow">→</div>
+    <div class="lang-after">「私は〜なんです」自分事で話す</div>
+  </div>
+
+  <div class="section-label">👥 3者面談でのラポールの活かし方</div>
+  <div class="card">
+    <div class="card-title"><span>🔗</span>1on1で育てたものを、初対面の場でも使えるか</div>
+    <div style="font-size:.87rem;line-height:1.7;margin-bottom:16px;">
+      1on1で深まった会話の力は、ほうっておくと「メンターとの閉じた関係」に留まりやすい。3者面談（受講生・メンター・第三者）は、受講生が<strong>初対面の人に対しても自分を開いて話せるか</strong>を試す場になる。メンターが「安全基地」として機能していれば、受講生は新しい関係でも話す勇気を持てる。
+    </div>
+    <div style="display:grid;gap:8px;font-size:.85rem;">
+      <div style="padding:10px 14px;background:var(--bg-sub);border-radius:7px;border:1px solid var(--border);">
+        <strong>準備：</strong>事前に「今日はどんなことを話したいか」を確認し、1on1で使っていた言葉を橋渡しとして使う
+      </div>
+      <div style="padding:10px 14px;background:var(--bg-sub);border-radius:7px;border:1px solid var(--border);">
+        <strong>振り返り：</strong>3者面談後に「どんな感じだったか」を受講生に聞く。1on1との違いを言葉にさせると、次の開示への学習になる
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CH05 ══ -->
+<section class="chapter ch-05" id="ch05">
+  <div class="chapter-header">
+    <span class="ch-num">CH 05</span>
+    <h2>メンターの自己開示</h2>
+  </div>
+
+  <div class="note-box info">
+    <span class="nb-icon">💡</span>
+    <div>
+      <strong>なぜメンターが先に開示するのか</strong><br>
+      受講生が「正しいことしか言えない」と感じているとき、メンターの小さな失敗談・弱さの共有が一気に開示の許可を作る。「このメンターも完璧じゃない」が伝わると、受講生は「自分の話をしていい」と感じる。ただしエピソードは1〜2分で切り上げて、受講生に戻す。
+    </div>
+  </div>
+
+  <div class="section-label">🤝 自己開示の5パターン</div>
+  <div class="disclosure-grid">
+    <div class="disclosure-card">
+      <div class="dc-num">パターン 01</div>
+      <div class="dc-title">経歴・経験の共有</div>
+      <div class="dc-body">自分が似た状況を経験したことを共有する。長くなると「講義」になるので1〜2分で完結させる。</div>
+      <div class="dc-example">「実は私も、最初の1年は何をやっているのかわからなくて…」</div>
+    </div>
+    <div class="disclosure-card">
+      <div class="dc-num">パターン 02</div>
+      <div class="dc-title">今も苦手なことの共有</div>
+      <div class="dc-body">「今も苦手なこと」を開示する。完璧なメンターではなく、同じ地平に立つ存在として見せる。最も許可が生まれやすい。</div>
+      <div class="dc-example">「今も人前でのプレゼンは緊張するんですよ、実は。」</div>
+    </div>
+    <div class="disclosure-card">
+      <div class="dc-num">パターン 03</div>
+      <div class="dc-title">自分の性格・タイプの共有</div>
+      <div class="dc-body">自分の傾向・性格を開示する。「私はこういう人間なので」という文脈で受講生も自己開示しやすくなる。</div>
+      <div class="dc-example">「私は一人の時間がないと整理できないタイプで、セッション前は必ず5分ひとりになるようにしています。」</div>
+    </div>
+    <div class="disclosure-card">
+      <div class="dc-num">パターン 04</div>
+      <div class="dc-title">具体的な失敗体験の共有</div>
+      <div class="dc-body">「うまくいかなかったこと」を具体的に話す。美化せず、本当に困った体験を話すことで信頼が生まれる。</div>
+      <div class="dc-example">「あのとき本当に追い詰められて、何度も辞めようと思いました。」</div>
+    </div>
+    <div class="disclosure-card">
+      <div class="dc-num">パターン 05</div>
+      <div class="dc-title">家族・私生活の一片</div>
+      <div class="dc-body">「人間としての自分」が見えることで受講生も人として話しやすくなる。深すぎない程度に。</div>
+      <div class="dc-example">「子どもが生まれてから、仕事への向き合い方がガラッと変わりました。」</div>
+    </div>
+  </div>
+
+  <div class="note-box warn">
+    <span class="nb-icon">⚠️</span>
+    <div>
+      <strong>自己開示が「自分の話」になるとラポールが崩れる</strong><br>
+      自己開示は「受講生が話しやすい場を作るためのもの」。話した後は必ず「あなたはどうですか」と受講生に戻す。メンターが話し続けると、受講生は「聞かなければいけない」モードになる。
+    </div>
+  </div>
+</section>
+
+<!-- ══ CH06 ══ -->
+<section class="chapter ch-06" id="ch06">
+  <div class="chapter-header">
+    <span class="ch-num">CH 06</span>
+    <h2>非言語・Zoom</h2>
+  </div>
+
+  <div class="note-box info">
+    <span class="nb-icon">📹</span>
+    <div>
+      <strong>Zoom非言語はオフラインより難しい</strong><br>
+      対面なら自然に届く「存在感」がカメラ越しには届かない。意識しなければ「無表情・無反応・声が単調」になる。逆に意識しすぎると不自然になる。<strong>「ちょうどいい余白」</strong>を意識することが鍵。
+    </div>
+  </div>
+
+  <div class="section-label">🖥️ メンター側のZoomチェックリスト</div>
+  <div class="zoom-grid">
+    <div class="zoom-card">
+      <span class="zc-icon">😊</span>
+      <div class="zc-title">接続の瞬間の笑顔</div>
+      <div class="zc-do">✅ カメラに映った最初の瞬間、笑顔でいること。受講生は「接続した瞬間から」評価している</div>
+      <div class="zc-ng">❌ 映ってから表情を作るのでは遅い。PC操作しながら「あ、どうも」はNG</div>
+    </div>
+    <div class="zoom-card">
+      <span class="zc-icon">🙂‍↕️</span>
+      <div class="zc-title">頷きの質と量</div>
+      <div class="zc-do">✅ 「なるほど」「そうですね」と言葉を添えた頷き。間（ま）を意識的に作る</div>
+      <div class="zc-ng">❌「うんうん」の連打は圧迫感・焦り感を与える。受講生が「早く終わらせなきゃ」と感じる</div>
+    </div>
+    <div class="zoom-card">
+      <span class="zc-icon">🎯</span>
+      <div class="zc-title">画面の中央にいること</div>
+      <div class="zc-do">✅ 顔が画面の中央やや上に来るよう調整。PCを正面に、顔が切れないように</div>
+      <div class="zc-ng">❌ 端に寄る・斜めを向く・カメラより上のモニターを見る（目線が外れて見える）</div>
+    </div>
+    <div class="zoom-card">
+      <span class="zc-icon">🗣️</span>
+      <div class="zc-title">話すスピード</div>
+      <div class="zc-do">✅ 対面より意識的にゆっくり話す。Zoomは音声の遅延があり、早口は聞き取りにくく圧迫感が生まれる</div>
+      <div class="zc-ng">❌ 早口は「早く終わりたい」「緊張している」に見える。受講生のラポールを下げる</div>
+    </div>
+    <div class="zoom-card">
+      <span class="zc-icon">🌅</span>
+      <div class="zc-title">照明・背景</div>
+      <div class="zc-do">✅ 顔が明るく見える照明（窓の前に座らない）。背景は整理されているか、バーチャル背景を使う</div>
+      <div class="zc-ng">❌ 逆光・暗い部屋は「見えにくい・怖い」印象になる</div>
+    </div>
+    <div class="zoom-card">
+      <span class="zc-icon">⏸️</span>
+      <div class="zc-title">沈黙への構え</div>
+      <div class="zc-do">✅ 受講生が考えているとき、埋めない。「うん」と小さく返して待つ。沈黙は考えている証拠</div>
+      <div class="zc-ng">❌ 沈黙を恐れて喋り続けると受講生の思考を奪う</div>
+    </div>
+  </div>
+
+  <div class="section-label">🔍 受講生の非言語を読む — Zoom越しのサイン</div>
+  <div class="card">
+    <div class="card-title"><span>👁️</span> Zoom越しで観察すべきポイント</div>
+    <div style="display:grid;gap:8px;font-size:.87rem;">
+      <div style="display:grid;grid-template-columns:auto 1fr;gap:12px;padding:10px 14px;background:var(--bg-sub);border-radius:7px;border:1px solid var(--border);">
+        <span style="color:var(--ok);font-weight:700;white-space:nowrap;">✅ 良いサイン</span>
+        <div>カメラに顔が近づく・前のめりになる・表情が豊かになる・声のトーンが上がる・身振りが増える</div>
+      </div>
+      <div style="display:grid;grid-template-columns:auto 1fr;gap:12px;padding:10px 14px;background:var(--bg-sub);border-radius:7px;border:1px solid var(--border);">
+        <span style="color:var(--warn);font-weight:700;white-space:nowrap;">⚠ 要注意</span>
+        <div>後ろに引く・画面から目を外す・声が小さくなる・「はい」「そうですね」の単音節が続く</div>
+      </div>
+      <div style="display:grid;grid-template-columns:auto 1fr;gap:12px;padding:10px 14px;background:var(--bg-sub);border-radius:7px;border:1px solid var(--border);">
+        <span style="color:var(--accent);font-weight:700;white-space:nowrap;">💡 深まりのサイン</span>
+        <div>沈黙後に「実は…」が来る・視線が下がりながら考え始める・話し終えてから「ありがとうございます」が出る</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CH07 ══ -->
+<section class="chapter ch-07" id="ch07">
+  <div class="chapter-header">
+    <span class="ch-num">CH 07</span>
+    <h2>落とし穴と回避策</h2>
+  </div>
+
+  <div class="pitfall-item">
+    <div class="pi-label">PITFALL 01</div>
+    <div class="pi-title">コーチングとティーチングの混同</div>
+    <div class="pi-body">「聞く」フェーズに入ったのに「教える」モードに切り替わってしまう。特にメンター自身がその領域の専門家のとき起きやすい。受講生が「教わりにきた」モードになるとラポール構築が止まる。</div>
+    <div class="pi-fix"><strong>回避策</strong>「今この会話は引き出すターンか、伝えるターンか」を常に意識する。「これはあなたにとってどういう意味がありますか？」を挟んで受講生に戻す。</div>
+  </div>
+  <div class="pitfall-item">
+    <div class="pi-label">PITFALL 02</div>
+    <div class="pi-title">表面的な共感で止まる</div>
+    <div class="pi-body">「大変でしたね」「わかります」と言いながら、受講生の内側に本当に降りていない。受講生は「聞いてもらっている感」はあるが「理解されている感」がない。</div>
+    <div class="pi-fix"><strong>回避策</strong>「大変でしたね」の次に「どのくらい大変でしたか？」「体のどこかに来ていましたか？」と具体に降りる。共感は入口、掘り下げが本体。</div>
+  </div>
+  <div class="pitfall-item">
+    <div class="pi-label">PITFALL 03</div>
+    <div class="pi-title">沈黙を埋めすぎる</div>
+    <div class="pi-body">受講生が考えているときに、メンターが言葉で埋めてしまう。ラポールが深まるほど、沈黙は受講生の内的整理の時間になる。それを奪うと話の深さが出なくなる。</div>
+    <div class="pi-fix"><strong>回避策</strong>沈黙3〜5秒は「考えている」として待つ。「難しい問いでしたか？」と言葉にする場合も、選択肢を提示せずに待つ。</div>
+  </div>
+  <div class="pitfall-item">
+    <div class="pi-label">PITFALL 04</div>
+    <div class="pi-title">解決を急ぐ</div>
+    <div class="pi-body">受講生がモヤモヤを話し始めたとき、「では、こうしましょう」と早期に解決策を提示してしまう。感情の整理が終わっていないうちに解決を急ぐと、次の開示が来なくなる。</div>
+    <div class="pi-fix"><strong>回避策</strong>「何かアドバイスが欲しいですか、それとも話すだけでいいですか？」と聞く。多くの場合、受講生は「話すだけでいい」と答える。</div>
+  </div>
+  <div class="pitfall-item">
+    <div class="pi-label">PITFALL 05</div>
+    <div class="pi-title">メンターへの依存を育ててしまう</div>
+    <div class="pi-body">ラポールが深まるほど、受講生がメンターへの依存を強めることがある。「メンターがいないと決められない」状態になると、受講生の自律的な成長が妨げられる。</div>
+    <div class="pi-fix"><strong>回避策</strong>意図的に「あなたはどう思う？」を先に聞く習慣を作る。決断は受講生が下し、メンターは壁打ち相手に徹する。</div>
+  </div>
+  <div class="pitfall-item">
+    <div class="pi-label">PITFALL 06</div>
+    <div class="pi-title">自分の経験を押し付ける</div>
+    <div class="pi-body">「自分はこうして成功したから」という経験を受講生に当てはめる。12タイプで見てきたように、動きやすくなる条件は受講生によって異なる。</div>
+    <div class="pi-fix"><strong>回避策</strong>「私の場合は〜だったけど、あなたはどうですか」という問い返しを習慣化する。自己開示は「受講生の開示への招待」であり、正解の押し付けではない。</div>
+  </div>
+  <div class="pitfall-item">
+    <div class="pi-label">PITFALL 07</div>
+    <div class="pi-title">1回目に出た本音を次回に拾わない</div>
+    <div class="pi-body">1回目に受講生が勇気を出して話した「小さな本音」をメンターが流してしまう。次回から「あのことを話しても意味がなかった」という判断が生まれ、開示が閉じる。</div>
+    <div class="pi-fix"><strong>回避策</strong>次のセッションの冒頭で「前回、〇〇って言っていましたね。その後どうでしたか？」と返す。言葉を拾ったことを示す。</div>
+  </div>
+  <div class="pitfall-item">
+    <div class="pi-label">PITFALL 08</div>
+    <div class="pi-title">Zoom越しの「無表情」</div>
+    <div class="pi-body">メンターが画面に集中して表情が固くなる。受講生には「怖い・興味なさそう」に見える。オフラインの自然な表情がカメラ越しには半分以下しか伝わらないと思っておく。</div>
+    <div class="pi-fix"><strong>回避策</strong>意識的に表情を「1.5倍」にする。頷きも「なるほど」の言葉も、普段より少し大きめに表現する。</div>
+  </div>
+</section>
+
+<!-- ══ CH08 ══ -->
+<section class="chapter ch-08" id="ch08">
+  <div class="chapter-header">
+    <span class="ch-num">CH 08</span>
+    <h2>振り返り指標</h2>
+  </div>
+
+  <div class="note-box info">
+    <span class="nb-icon">📊</span>
+    <div>
+      <strong>「成功の基準」を定義しない。変化を観察する。</strong><br>
+      ラポールに正解はない。「こうなれば成功」という固定基準ではなく、<strong>受講生がセッションをまたいでどう変わっているか</strong>を言葉・行動・話の深さの3つで見る。
+    </div>
+  </div>
+
+  <div class="section-label">🟢 良い変化のサイン（3回以内に見られれば良好）</div>
+  <div class="sign-grid">
+    <div class="sign-chip ok"><span class="sc-icon">📢</span><span>前回の話題を受講生から自発的に続ける</span></div>
+    <div class="sign-chip ok"><span class="sc-icon">🌡️</span><span>体で感じていることを言葉にし始める</span></div>
+    <div class="sign-chip ok"><span class="sc-icon">⏰</span><span>予定より話が長くなる（受講生側から）</span></div>
+    <div class="sign-chip ok"><span class="sc-icon">🚶</span><span>セッション外で自発的にアクション報告が来る</span></div>
+    <div class="sign-chip ok"><span class="sc-icon">✍️</span><span>自分のパターンを自分の言葉で言い始める</span></div>
+    <div class="sign-chip ok"><span class="sc-icon">🔄</span><span>「〜していい」という言葉が増える</span></div>
+  </div>
+
+  <div class="section-label">🔴 早めのアプローチ変更のサイン</div>
+  <div class="sign-grid">
+    <div class="sign-chip warn"><span class="sc-icon">🪨</span><span>3回以上「大丈夫です」で終わっている</span></div>
+    <div class="sign-chip warn"><span class="sc-icon">📉</span><span>セッション中の発言量がむしろ減っている</span></div>
+    <div class="sign-chip warn"><span class="sc-icon">❄️</span><span>毎回同じ表面的なアップデートで終わる</span></div>
+    <div class="sign-chip warn"><span class="sc-icon">🌐</span><span>「私は」ではなく「一般的に」「普通は」で語り続ける</span></div>
+    <div class="sign-chip warn"><span class="sc-icon">🔕</span><span>セッション外の連絡が2ヶ月以上全くない</span></div>
+    <div class="sign-chip warn"><span class="sc-icon">🚫</span><span>沈黙のあと「何か答えなきゃ」感で話す</span></div>
+  </div>
+
+  <div class="section-label">📝 セッション後の自己振り返り — 5問</div>
+  <div class="card">
+    <div class="card-title"><span>🔬</span>セッションのたびに確認する問い</div>
+    <div style="display:grid;gap:10px;font-size:.875rem;">
+      <div style="padding:12px 16px;background:var(--bg-sub);border-radius:8px;border:1px solid var(--border);">
+        <strong>Q1：</strong> 今日のセッションで、受講生が「自分でも気づいていなかったこと」を言葉にした瞬間はあったか？
+      </div>
+      <div style="padding:12px 16px;background:var(--bg-sub);border-radius:8px;border:1px solid var(--border);">
+        <strong>Q2：</strong> 受講生の言葉は今日、前回と比べて変わっていたか？（体の感覚を言葉にし始めたか・主語が変わったか・言い切りが強くなったか）
+      </div>
+      <div style="padding:12px 16px;background:var(--bg-sub);border-radius:8px;border:1px solid var(--border);">
+        <strong>Q3：</strong> 自分が「早く答えを出したかった」「早く解決したかった」と感じた場面はあったか？
+      </div>
+      <div style="padding:12px 16px;background:var(--bg-sub);border-radius:8px;border:1px solid var(--border);">
+        <strong>Q4：</strong> 今日の受講生のタイプの仮説は更新されたか？（何が変わったか具体的に）
+      </div>
+      <div style="padding:12px 16px;background:var(--bg-sub);border-radius:8px;border:1px solid var(--border);">
+        <strong>Q5：</strong> 次回の冒頭で返したい「受講生の言葉」は何か？
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+</div>
+
+<script>
+function toggleTheme() {
+  const root = document.documentElement;
+  const current = root.getAttribute('data-theme');
+  if (current === 'dark') root.setAttribute('data-theme', 'light');
+  else if (current === 'light') root.removeAttribute('data-theme');
+  else root.setAttribute('data-theme', 'dark');
+}
+
+function toggleCheck(el) {
+  el.closest('.cl-item').classList.toggle('checked', el.checked);
+}
+
+function toggleTR(header) {
+  const body = header.nextElementSibling;
+  body.classList.toggle('collapsed');
+}
+
+// Open all tr-bodies by default
+document.querySelectorAll('.tr-body').forEach(b => b.classList.remove('collapsed'));
+
+// Active nav
+const sections = document.querySelectorAll('.chapter[id]');
+const navLinks = document.querySelectorAll('.nav-link');
+function setActive() {
+  let current = '';
+  sections.forEach(s => { if (window.scrollY >= s.offsetTop - 80) current = s.id; });
+  navLinks.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + current));
+}
+window.addEventListener('scroll', setActive, { passive: true });
+setActive();
+</script>
