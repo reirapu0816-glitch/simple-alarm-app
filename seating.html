@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>オフ会 座席管理システム</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Hiragino Kaku Gothic ProN', 'Yu Gothic', 'Meiryo', sans-serif;
+            background: #eceff1;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* ─── Header ─── */
+        .header {
+            background: #1a237e;
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-shrink: 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+        .header h1 { font-size: 17px; white-space: nowrap; }
+        .stats {
+            display: flex;
+            gap: 24px;
+            margin-left: auto;
+            font-size: 12px;
+        }
+        .stat { text-align: center; }
+        .stat .val { font-size: 22px; font-weight: bold; line-height: 1; }
+
+        /* ─── Tabs ─── */
+        .view-tabs {
+            display: flex;
+            background: white;
+            border-bottom: 2px solid #c5cae9;
+            flex-shrink: 0;
+        }
+        .view-tab {
+            padding: 9px 20px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            color: #888;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+            transition: color 0.15s;
+        }
+        .view-tab.active { color: #1a237e; border-bottom-color: #1a237e; }
+
+        /* ─── Main layout ─── */
+        .main { display: flex; flex: 1; overflow: hidden; }
+
+        /* ─── Venue wrapper ─── */
+        .venue-wrapper {
+            flex: 1;
+            overflow: auto;
+            padding: 16px;
+            background: #eceff1;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+        }
+
+        /* ─── Venue diagram ─── */
+        .venue {
+            position: relative;
+            background: white;
+            width: 920px;
+            height: 650px;
+            border: 2px solid #90a4ae;
+            border-radius: 4px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+            flex-shrink: 0;
+        }
+
+        /* Venue structure labels */
+        .vl {
+            position: absolute;
+            font-size: 12px;
+            color: #555;
+            background: #eceff1;
+            border: 1px solid #b0bec5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            border-radius: 2px;
+        }
+        .vl.dark { background: #455a64; color: white; border-color: #37474f; }
+        .vl.stage { background: #cfd8dc; color: #333; border-color: #90a4ae; font-weight: bold; }
+        .vl.provzone {
+            background: rgba(200,200,200,0.35);
+            border: 2px dashed #aaa;
+            border-radius: 4px;
+        }
+        .vl.vertical { writing-mode: vertical-rl; text-orientation: mixed; font-size: 11px; }
+        .vl.pillar { background: #607d8b; color: white; border-color: #455a64; font-weight: bold; border-radius: 6px; }
+        .prov-note {
+            position: absolute;
+            font-size: 11px;
+            color: #777;
+            text-align: center;
+            line-height: 1.5;
+            white-space: pre-line;
+        }
+
+        /* ─── Table blocks ─── */
+        .table-block {
+            position: absolute;
+            width: 87px;
+            height: 55px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+            color: white;
+            transition: transform 0.15s, box-shadow 0.15s;
+            user-select: none;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.25);
+        }
+        .table-block:hover { transform: scale(1.06); box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        .table-block.selected { outline: 3px solid #e53935; outline-offset: 3px; transform: scale(1.06); }
+        .table-block .t-label { font-size: 10px; font-weight: normal; opacity: 0.9; margin-top: 1px; }
+        .table-block.prov-table { border: 2px dashed rgba(255,255,255,0.6); }
+
+        /* occupancy colors */
+        .table-block.st-empty   { background: #78909c; }
+        .table-block.st-partial { background: #ef6c00; }
+        .table-block.st-full    { background: #2e7d32; }
+
+        /* ─── Right panel ─── */
+        .panel {
+            width: 310px;
+            border-left: 2px solid #c5cae9;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+        .panel-controls {
+            padding: 10px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            background: #fafafa;
+        }
+        .btn {
+            padding: 7px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: opacity 0.15s, transform 0.1s;
+            white-space: nowrap;
+        }
+        .btn:hover { opacity: 0.85; transform: translateY(-1px); }
+        .btn:active { transform: translateY(0); }
+        .btn-blue   { background: #1565c0; color: white; }
+        .btn-green  { background: #2e7d32; color: white; }
+        .btn-gray   { background: #546e7a; color: white; }
+        .btn-orange { background: #e65100; color: white; }
+        .btn-red    { background: #c62828; color: white; }
+
+        .panel-search {
+            padding: 10px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .search-input {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+        .search-input:focus { border-color: #1a237e; outline: none; }
+        .search-results { margin-top: 6px; max-height: 140px; overflow-y: auto; }
+        .search-item {
+            padding: 7px 10px;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            font-size: 13px;
+        }
+        .search-item:hover { background: #e8eaf6; }
+        .search-item .si-loc { font-size: 11px; color: #888; margin-top: 1px; }
+
+        .panel-body { flex: 1; overflow-y: auto; padding: 14px; }
+        .no-sel {
+            text-align: center;
+            color: #999;
+            margin-top: 40px;
+            line-height: 2;
+            font-size: 14px;
+        }
+
+        /* ─── Seat grid in panel ─── */
+        .sel-title { font-size: 16px; font-weight: bold; margin-bottom: 2px; }
+        .sel-sub { font-size: 12px; color: #888; margin-bottom: 14px; }
+        .seats-section { margin-bottom: 12px; }
+        .seats-label { font-size: 10px; color: #999; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 5px; }
+        .seats-row { display: flex; gap: 5px; }
+        .seat-btn {
+            flex: 1;
+            padding: 6px 2px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            background: #fafafa;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.15s;
+            min-width: 0;
+        }
+        .seat-btn:hover { border-color: #3f51b5; background: #e8eaf6; }
+        .seat-btn.occupied { background: #e8f5e9; border-color: #4caf50; }
+        .seat-btn.occupied:hover { background: #dcedc8; border-color: #2e7d32; }
+        .seat-num { font-size: 9px; color: #aaa; }
+        .seat-name { font-size: 10px; font-weight: 600; color: #263238; word-break: break-all; margin-top: 2px; }
+        .seat-empty { font-size: 10px; color: #ccc; }
+
+        /* ─── List view ─── */
+        .list-view {
+            display: none;
+            flex: 1;
+            overflow-y: auto;
+            background: white;
+        }
+        .list-view.active { display: block; }
+        .list-toolbar {
+            padding: 10px 16px;
+            background: #fafafa;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-shrink: 0;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+        .list-filter {
+            padding: 6px 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 13px;
+            flex: 1;
+        }
+        .list-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        .list-table th {
+            background: #37474f;
+            color: white;
+            padding: 9px 14px;
+            text-align: left;
+            position: sticky;
+            top: 42px;
+            z-index: 1;
+        }
+        .list-table td { padding: 8px 14px; border-bottom: 1px solid #f0f0f0; }
+        .list-table tr:hover td { background: #f5f5f5; }
+        .list-table .empty-seat { color: #ccc; font-style: italic; }
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .badge-full    { background: #c8e6c9; color: #1b5e20; }
+        .badge-partial { background: #ffe0b2; color: #e65100; }
+        .badge-empty   { background: #f0f0f0; color: #999; }
+
+        /* ─── Modal ─── */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.55);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-overlay.open { display: flex; }
+        .modal {
+            background: white;
+            border-radius: 10px;
+            padding: 24px;
+            width: 340px;
+            box-shadow: 0 12px 32px rgba(0,0,0,0.3);
+        }
+        .modal h3 { font-size: 15px; margin-bottom: 4px; }
+        .modal .modal-sub { font-size: 12px; color: #888; margin-bottom: 14px; }
+        .modal input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+            margin-bottom: 14px;
+            font-family: inherit;
+        }
+        .modal input:focus { border-color: #1a237e; outline: none; }
+        .modal-actions { display: flex; gap: 8px; justify-content: flex-end; }
+
+        /* ─── Canva export modal ─── */
+        .export-info {
+            background: #e8eaf6;
+            border-radius: 6px;
+            padding: 12px;
+            font-size: 12px;
+            line-height: 1.7;
+            margin-bottom: 14px;
+            color: #333;
+        }
+
+        /* Hidden file input */
+        #csvFile { display: none; }
+
+        @media print {
+            .header, .view-tabs, .panel { display: none !important; }
+            body { display: block; overflow: auto; }
+            .venue-wrapper { padding: 0; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ─── Header ─── -->
+<div class="header">
+    <h1>🎉 オフ会 座席管理システム</h1>
+    <div class="stats">
+        <div class="stat"><div class="val" id="statTotal">0</div><div>総席数</div></div>
+        <div class="stat"><div class="val" id="statAssigned">0</div><div>割当済</div></div>
+        <div class="stat"><div class="val" id="statEmpty">0</div><div>空席</div></div>
+        <div class="stat"><div class="val" id="statTables">0</div><div>テーブル</div></div>
+    </div>
+</div>
+
+<!-- ─── View tabs ─── -->
+<div class="view-tabs">
+    <div class="view-tab active" data-view="map">🗺️ 会場マップ</div>
+    <div class="view-tab" data-view="list">📋 座席一覧</div>
+</div>
+
+<!-- ─── Main ─── -->
+<div class="main">
+
+    <!-- Venue map -->
+    <div class="venue-wrapper" id="venueView">
+        <div class="venue" id="venue"></div>
+    </div>
+
+    <!-- List view (hidden initially) -->
+    <div class="list-view" id="listView">
+        <div class="list-toolbar">
+            <input class="list-filter" id="listFilter" placeholder="🔍 名前・テーブルで絞り込み..." oninput="filterList()">
+            <button class="btn btn-gray" onclick="window.print()">🖨️ 印刷</button>
+        </div>
+        <table class="list-table">
+            <thead>
+                <tr>
+                    <th>テーブル</th>
+                    <th>席番号</th>
+                    <th>席ID</th>
+                    <th>お名前</th>
+                    <th>状況</th>
+                </tr>
+            </thead>
+            <tbody id="listBody"></tbody>
+        </table>
+    </div>
+
+    <!-- Right panel -->
+    <div class="panel">
+        <div class="panel-controls">
+            <button class="btn btn-blue"   onclick="importCSV()">📥 CSV読込</button>
+            <button class="btn btn-green"  onclick="exportCSV()">📤 CSV出力</button>
+            <button class="btn btn-orange" onclick="showCanvaHelp()">🎨 Canva連携</button>
+            <button class="btn btn-gray"   onclick="autoAssign()">⚡ 自動割当</button>
+            <button class="btn btn-red"    onclick="clearAll()">🗑️ 全クリア</button>
+        </div>
+        <div class="panel-search">
+            <input class="search-input" id="searchInput" placeholder="🔍 参加者名を検索..." oninput="onSearch()">
+            <div class="search-results" id="searchResults"></div>
+        </div>
+        <div class="panel-body" id="panelBody">
+            <div class="no-sel">← 会場マップのテーブルを<br>クリックして座席を管理</div>
+        </div>
+    </div>
+</div>
+
+<!-- ─── Seat assignment modal ─── -->
+<div class="modal-overlay" id="seatModal">
+    <div class="modal">
+        <h3 id="modalTitle">座席を割り当て</h3>
+        <div class="modal-sub" id="modalSub"></div>
+        <input type="text" id="modalInput" placeholder="参加者名を入力..." autocomplete="off">
+        <div class="modal-actions">
+            <button class="btn btn-red"  onclick="clearSeat()">クリア</button>
+            <button class="btn btn-gray" onclick="closeModal()">キャンセル</button>
+            <button class="btn btn-blue" onclick="saveSeat()">保存</button>
+        </div>
+    </div>
+</div>
+
+<!-- ─── Canva info modal ─── -->
+<div class="modal-overlay" id="canvaModal">
+    <div class="modal">
+        <h3>🎨 Canva連携について</h3>
+        <div style="margin-bottom:12px"></div>
+        <div class="export-info">
+            <strong>Canva Bulk Createでの使い方：</strong><br>
+            1. 「Canva用CSV出力」で CSVファイルをダウンロード<br>
+            2. Canvaで座席表デザインを作成<br>
+            3. 「Bulk Create」機能でCSVを読み込み<br>
+            4. 席ID・テーブル名・お名前が自動でデザインに入ります
+        </div>
+        <div class="modal-actions">
+            <button class="btn btn-gray"  onclick="closeCanvaModal()">閉じる</button>
+            <button class="btn btn-green" onclick="exportForCanva()">Canva用CSV出力</button>
+        </div>
+    </div>
+</div>
+
+<!-- ─── Auto-assign modal ─── -->
+<div class="modal-overlay" id="autoModal">
+    <div class="modal">
+        <h3>⚡ 自動割り当て</h3>
+        <div class="modal-sub">参加者リスト（1行1名）を貼り付けてください</div>
+        <textarea id="autoInput" style="width:100%;height:140px;padding:10px;border:2px solid #ccc;border-radius:6px;font-size:13px;font-family:inherit;resize:vertical;margin-bottom:14px;" placeholder="田中太郎&#10;鈴木花子&#10;佐藤一郎&#10;..."></textarea>
+        <div style="font-size:12px;color:#888;margin-bottom:14px;" id="autoCount">0名</div>
+        <div class="modal-actions">
+            <button class="btn btn-gray" onclick="closeAutoModal()">キャンセル</button>
+            <button class="btn btn-blue" onclick="runAutoAssign()">割り当て実行</button>
+        </div>
+    </div>
+</div>
+
+<input type="file" id="csvFile" accept=".csv,.txt" onchange="handleCSVFile(event)">
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// TABLE CONFIGURATION
+// ═══════════════════════════════════════════════════════════
+
+// 26 tables, A-Z, each with 10 seats
+const TABLE_LAYOUT = [
+    { id:'A', row:0, col:2 },                           // standalone top
+    { id:'B', row:1, col:0 }, { id:'C', row:1, col:1 },  // row 1 (5 tables)
+    { id:'D', row:1, col:2 }, { id:'E', row:1, col:3 },
+    { id:'F', row:1, col:4 },
+    { id:'G', row:2, col:0 }, { id:'H', row:2, col:1 },  // row 2 (6 tables)
+    { id:'I', row:2, col:2 }, { id:'J', row:2, col:3 },
+    { id:'K', row:2, col:4 }, { id:'L', row:2, col:5 },
+    { id:'M', row:3, col:0 }, { id:'N', row:3, col:1 },  // row 3 (6 tables)
+    { id:'O', row:3, col:2 }, { id:'P', row:3, col:3 },
+    { id:'Q', row:3, col:4 }, { id:'R', row:3, col:5 },
+    { id:'S', row:4, col:0 }, { id:'T', row:4, col:1 },  // row 4 (6 tables)
+    { id:'U', row:4, col:2 }, { id:'V', row:4, col:3 },
+    { id:'W', row:4, col:4 }, { id:'X', row:4, col:5 },
+    { id:'Y', row:5, col:1 }, { id:'Z', row:5, col:2, provisional:true }, // bottom row
+];
+
+const SEATS_PER_TABLE = 10;
+const TOTAL_SEATS = TABLE_LAYOUT.length * SEATS_PER_TABLE;
+
+// Venue layout constants
+const V = {
+    colStep: 103,
+    rowStep: 97,
+    tableAreaLeft: 100,
+    tableAreaTop: 55,
+    tableW: 87,
+    tableH: 55,
+};
+
+// ═══════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════
+
+let assignments = {}; // seatId -> name  e.g. "A-1" -> "田中太郎"
+let selectedTable = null;
+let currentSeatId = null;
+
+function loadData() {
+    try {
+        const s = localStorage.getItem('offkaiSeating2025');
+        if (s) assignments = JSON.parse(s);
+    } catch(e) { assignments = {}; }
+}
+
+function saveData() {
+    localStorage.setItem('offkaiSeating2025', JSON.stringify(assignments));
+    updateStats();
+    renderTableColors();
+    if (selectedTable) renderPanel(selectedTable);
+    if (document.getElementById('listView').classList.contains('active')) renderList();
+}
+
+// ═══════════════════════════════════════════════════════════
+// VENUE RENDERING
+// ═══════════════════════════════════════════════════════════
+
+function tablePos(t) {
+    const pad = Math.floor((V.colStep - V.tableW) / 2);
+    const left = V.tableAreaLeft + t.col * V.colStep + pad;
+    const top  = V.tableAreaTop  + t.row * V.rowStep;
+    return { left, top };
+}
+
+function addEl(venue, tag, props, cls, text) {
+    const el = document.createElement(tag || 'div');
+    el.className = cls || '';
+    Object.assign(el.style, { position:'absolute', ...props });
+    if (text !== undefined) el.textContent = text;
+    venue.appendChild(el);
+    return el;
+}
+
+function renderVenue() {
+    const venue = document.getElementById('venue');
+    venue.innerHTML = '';
+
+    // ── Left structure ──
+    // 司会 box (top-left corner)
+    addEl(venue, 'div', {top:'0',left:'0',width:'88px',height:'28px'}, 'vl dark', '司会');
+    // スクリーン (top vertical, left side)
+    addEl(venue, 'div', {top:'30px',left:'0',width:'28px',height:'195px'}, 'vl dark vertical', 'スクリーン');
+    // 舞台 (stage box)
+    addEl(venue, 'div', {top:'85px',left:'28px',width:'60px',height:'265px'}, 'vl stage vertical', '舞台');
+    // スクリーン (bottom vertical, left side)
+    addEl(venue, 'div', {top:'355px',left:'0',width:'28px',height:'195px'}, 'vl dark vertical', 'スクリーン');
+
+    // ── Top bar ──
+    addEl(venue, 'div', {top:'0',left:'89px',width:'570px',height:'28px'}, 'vl dark', 'スクリーン');
+    addEl(venue, 'div', {top:'0',left:'662px',width:'100px',height:'28px'}, 'vl dark', 'ドリンク');
+    addEl(venue, 'div', {top:'0',left:'765px',width:'155px',height:'28px'}, 'vl', '仮の席?');
+
+    // ── Right structure ──
+    addEl(venue, 'div', {top:'30px',left:'662px',width:'42px',height:'130px'}, 'vl dark vertical', 'ドリンク');
+    const provZone = addEl(venue, 'div', {top:'30px',left:'765px',width:'155px',height:'560px'}, 'vl provzone');
+    addEl(venue, 'div', {top:'120px',left:'768px',width:'149px'}, 'prov-note',
+        '別のグループが\n使用しなければ\n使えるゾーン？');
+
+    // ── Bottom bar ──
+    addEl(venue, 'div', {top:'622px',left:'89px',width:'570px',height:'28px'}, 'vl dark', 'キッチン');
+    addEl(venue, 'div', {top:'622px',left:'662px',width:'258px',height:'28px'}, 'vl', '入り口');
+
+    // ── Pillar (col 5, row 1) ──
+    const pillarLeft = V.tableAreaLeft + 5 * V.colStep + Math.floor((V.colStep - 50) / 2);
+    const pillarTop  = V.tableAreaTop  + 1 * V.rowStep + Math.floor((V.tableH - 50) / 2);
+    addEl(venue, 'div', {top:pillarTop+'px',left:pillarLeft+'px',width:'50px',height:'50px'}, 'vl pillar', '柱');
+
+    // ── Table blocks ──
+    TABLE_LAYOUT.forEach(t => {
+        const { left, top } = tablePos(t);
+        const div = document.createElement('div');
+        div.className = 'table-block st-empty' + (t.provisional ? ' prov-table' : '');
+        div.id = 'tbl-' + t.id;
+        div.style.cssText = `left:${left}px;top:${top}px;width:${V.tableW}px;height:${V.tableH}px;`;
+        div.innerHTML = `
+            <span>${t.id}</span>
+            <span class="t-label" id="tlbl-${t.id}">0/10席</span>
+        `;
+        div.addEventListener('click', () => selectTable(t.id));
+        venue.appendChild(div);
+    });
+
+    renderTableColors();
+}
+
+function renderTableColors() {
+    TABLE_LAYOUT.forEach(t => {
+        const el  = document.getElementById('tbl-' + t.id);
+        const lbl = document.getElementById('tlbl-' + t.id);
+        if (!el) return;
+
+        let filled = 0;
+        for (let s = 1; s <= SEATS_PER_TABLE; s++) {
+            if (assignments[`${t.id}-${s}`]) filled++;
+        }
+
+        if (lbl) lbl.textContent = `${filled}/${SEATS_PER_TABLE}席`;
+
+        el.classList.remove('st-empty', 'st-partial', 'st-full', 'selected');
+        if (filled === 0)                    el.classList.add('st-empty');
+        else if (filled < SEATS_PER_TABLE)   el.classList.add('st-partial');
+        else                                  el.classList.add('st-full');
+
+        if (selectedTable === t.id) el.classList.add('selected');
+    });
+}
+
+// ═══════════════════════════════════════════════════════════
+// TABLE SELECTION & PANEL
+// ═══════════════════════════════════════════════════════════
+
+function selectTable(id) {
+    selectedTable = id;
+    renderTableColors();
+    renderPanel(id);
+}
+
+function renderPanel(id) {
+    const t = TABLE_LAYOUT.find(x => x.id === id);
+    const body = document.getElementById('panelBody');
+    const filled = countFilled(id);
+
+    let statusBadge = '';
+    if (filled === 0)                  statusBadge = '<span class="badge badge-empty">空</span>';
+    else if (filled < SEATS_PER_TABLE) statusBadge = `<span class="badge badge-partial">${filled}名</span>`;
+    else                               statusBadge = `<span class="badge badge-full">満席</span>`;
+
+    body.innerHTML = `
+        <div class="sel-title">テーブル ${id} ${statusBadge}</div>
+        <div class="sel-sub">${filled}/${SEATS_PER_TABLE}席割り当て済${t.provisional ? '　⚠️ 仮設定テーブル' : ''}</div>
+        <div class="seats-section">
+            <div class="seats-label">上側の席 (1〜5番)</div>
+            <div class="seats-row" id="srow-top"></div>
+        </div>
+        <div class="seats-section">
+            <div class="seats-label">下側の席 (6〜10番)</div>
+            <div class="seats-row" id="srow-bot"></div>
+        </div>
+        <div style="margin-top:16px;border-top:1px solid #eee;padding-top:12px">
+            <button class="btn btn-red" style="font-size:11px;padding:5px 10px"
+                onclick="clearTable('${id}')">テーブル${id}を全クリア</button>
+        </div>
+    `;
+
+    const topRow = document.getElementById('srow-top');
+    const botRow = document.getElementById('srow-bot');
+    for (let s = 1; s <= 5; s++)          topRow.appendChild(makeSeatBtn(id, s));
+    for (let s = 6; s <= SEATS_PER_TABLE; s++) botRow.appendChild(makeSeatBtn(id, s));
+}
+
+function makeSeatBtn(tableId, seatNum) {
+    const seatId = `${tableId}-${seatNum}`;
+    const name   = assignments[seatId] || '';
+    const btn    = document.createElement('div');
+    btn.className = 'seat-btn' + (name ? ' occupied' : '');
+    btn.innerHTML = `
+        <div class="seat-num">${seatNum}番</div>
+        ${name
+            ? `<div class="seat-name">${escHtml(name)}</div>`
+            : `<div class="seat-empty">－</div>`}
+    `;
+    btn.addEventListener('click', () => openSeatModal(tableId, seatNum));
+    return btn;
+}
+
+function countFilled(id) {
+    let n = 0;
+    for (let s = 1; s <= SEATS_PER_TABLE; s++) if (assignments[`${id}-${s}`]) n++;
+    return n;
+}
+
+function clearTable(id) {
+    if (!confirm(`テーブル${id}の全割り当てをクリアしますか？`)) return;
+    for (let s = 1; s <= SEATS_PER_TABLE; s++) delete assignments[`${id}-${s}`];
+    saveData();
+}
+
+// ═══════════════════════════════════════════════════════════
+// SEAT MODAL
+// ═══════════════════════════════════════════════════════════
+
+function openSeatModal(tableId, seatNum) {
+    currentSeatId = `${tableId}-${seatNum}`;
+    document.getElementById('modalTitle').textContent = `テーブル${tableId} - ${seatNum}番席`;
+    document.getElementById('modalSub').textContent   = assignments[currentSeatId] ? `現在: ${assignments[currentSeatId]}` : '（空席）';
+    document.getElementById('modalInput').value       = assignments[currentSeatId] || '';
+    document.getElementById('seatModal').classList.add('open');
+    setTimeout(() => document.getElementById('modalInput').focus(), 50);
+}
+
+function closeModal() {
+    document.getElementById('seatModal').classList.remove('open');
+    currentSeatId = null;
+}
+
+function saveSeat() {
+    if (!currentSeatId) return;
+    const name = document.getElementById('modalInput').value.trim();
+    if (name) assignments[currentSeatId] = name;
+    else      delete assignments[currentSeatId];
+    saveData();
+    closeModal();
+}
+
+function clearSeat() {
+    if (!currentSeatId) return;
+    delete assignments[currentSeatId];
+    saveData();
+    closeModal();
+}
+
+// ═══════════════════════════════════════════════════════════
+// AUTO ASSIGN MODAL
+// ═══════════════════════════════════════════════════════════
+
+function autoAssign() {
+    document.getElementById('autoInput').value = '';
+    document.getElementById('autoCount').textContent = '0名';
+    document.getElementById('autoModal').classList.add('open');
+    setTimeout(() => document.getElementById('autoInput').focus(), 50);
+}
+
+function closeAutoModal() {
+    document.getElementById('autoModal').classList.remove('open');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('autoInput').addEventListener('input', function() {
+        const names = this.value.split('\n').map(s => s.trim()).filter(Boolean);
+        document.getElementById('autoCount').textContent = `${names.length}名`;
+    });
+});
+
+function runAutoAssign() {
+    const names = document.getElementById('autoInput').value.split('\n')
+        .map(s => s.trim()).filter(Boolean);
+    if (names.length === 0) { alert('名前を入力してください。'); return; }
+
+    // find all empty seats in order
+    const emptySeats = [];
+    TABLE_LAYOUT.forEach(t => {
+        for (let s = 1; s <= SEATS_PER_TABLE; s++) {
+            const id = `${t.id}-${s}`;
+            if (!assignments[id]) emptySeats.push(id);
+        }
+    });
+
+    if (names.length > emptySeats.length) {
+        if (!confirm(`空席は${emptySeats.length}席ですが${names.length}名います。\n最初の${emptySeats.length}名だけ割り当てますか？`)) return;
+    }
+
+    const count = Math.min(names.length, emptySeats.length);
+    for (let i = 0; i < count; i++) {
+        assignments[emptySeats[i]] = names[i];
+    }
+
+    saveData();
+    closeAutoModal();
+    alert(`${count}名を自動割り当てしました。`);
+}
+
+// ═══════════════════════════════════════════════════════════
+// STATS
+// ═══════════════════════════════════════════════════════════
+
+function updateStats() {
+    const assigned = Object.keys(assignments).length;
+    const tablesUsed = new Set(Object.keys(assignments).map(k => k.split('-')[0])).size;
+    document.getElementById('statTotal').textContent    = TOTAL_SEATS;
+    document.getElementById('statAssigned').textContent = assigned;
+    document.getElementById('statEmpty').textContent    = TOTAL_SEATS - assigned;
+    document.getElementById('statTables').textContent   = `${tablesUsed}/${TABLE_LAYOUT.length}`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// LIST VIEW
+// ═══════════════════════════════════════════════════════════
+
+let listData = [];
+
+function buildListData() {
+    listData = [];
+    TABLE_LAYOUT.forEach(t => {
+        const filled = countFilled(t.id);
+        for (let s = 1; s <= SEATS_PER_TABLE; s++) {
+            const seatId = `${t.id}-${s}`;
+            listData.push({
+                table: t.id, seat: s, seatId,
+                name: assignments[seatId] || '',
+                filled, prov: !!t.provisional
+            });
+        }
+    });
+}
+
+function renderList() {
+    buildListData();
+    filterList();
+}
+
+function filterList() {
+    const q = document.getElementById('listFilter').value.toLowerCase();
+    const rows = listData.filter(r =>
+        !q ||
+        r.name.toLowerCase().includes(q) ||
+        r.table.toLowerCase().includes(q) ||
+        r.seatId.toLowerCase().includes(q)
+    );
+
+    const tbody = document.getElementById('listBody');
+    tbody.innerHTML = rows.map(r => {
+        const badge = r.filled === SEATS_PER_TABLE ? 'full' : r.filled > 0 ? 'partial' : 'empty';
+        return `<tr>
+            <td>テーブル <strong>${r.table}</strong>${r.prov ? ' ⚠️' : ''}</td>
+            <td>${r.seat}番</td>
+            <td style="color:#999;font-size:12px">${r.seatId}</td>
+            <td class="${r.name ? '' : 'empty-seat'}">${r.name ? escHtml(r.name) : '（空席）'}</td>
+            <td><span class="badge badge-${badge}">${r.filled}/${SEATS_PER_TABLE}</span></td>
+        </tr>`;
+    }).join('');
+}
+
+// ═══════════════════════════════════════════════════════════
+// CSV IMPORT / EXPORT
+// ═══════════════════════════════════════════════════════════
+
+function importCSV() { document.getElementById('csvFile').click(); }
+
+function handleCSVFile(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+        const lines = ev.target.result.split('\n').map(l => l.trim()).filter(Boolean);
+        let count = 0;
+        lines.forEach(line => {
+            const parts = line.split(',').map(p => p.trim().replace(/^"|"$/g, ''));
+            // Format: table, seat, name  OR  A-1, name
+            if (parts.length >= 3) {
+                const tbl  = parts[0].toUpperCase();
+                const seat = parseInt(parts[1]);
+                const name = parts[2];
+                if (TABLE_LAYOUT.find(t => t.id === tbl) && seat >= 1 && seat <= SEATS_PER_TABLE && name) {
+                    assignments[`${tbl}-${seat}`] = name;
+                    count++;
+                }
+            } else if (parts.length === 2 && parts[0].includes('-')) {
+                const [tbl, seatStr] = parts[0].split('-');
+                const seat = parseInt(seatStr);
+                const name = parts[1];
+                if (TABLE_LAYOUT.find(t => t.id === tbl.toUpperCase()) && seat >= 1 && seat <= SEATS_PER_TABLE && name) {
+                    assignments[`${tbl.toUpperCase()}-${seat}`] = name;
+                    count++;
+                }
+            }
+        });
+        saveData();
+        alert(`${count}件の座席割り当てを読み込みました。`);
+        e.target.value = '';
+    };
+    reader.readAsText(file, 'UTF-8');
+}
+
+function exportCSV() {
+    const rows = ['テーブル,席番号,席ID,お名前'];
+    TABLE_LAYOUT.forEach(t => {
+        for (let s = 1; s <= SEATS_PER_TABLE; s++) {
+            const seatId = `${t.id}-${s}`;
+            rows.push(`${t.id},${s},${seatId},${assignments[seatId] || ''}`);
+        }
+    });
+    downloadFile(rows.join('\n'), 'offkai-seating.csv', 'text/csv');
+}
+
+function showCanvaHelp() {
+    document.getElementById('canvaModal').classList.add('open');
+}
+function closeCanvaModal() {
+    document.getElementById('canvaModal').classList.remove('open');
+}
+
+function exportForCanva() {
+    // Format: seat_id, table_label, seat_number, name — for Canva Bulk Create
+    const rows = ['seat_id,table_name,seat_number,name'];
+    TABLE_LAYOUT.forEach(t => {
+        for (let s = 1; s <= SEATS_PER_TABLE; s++) {
+            const seatId = `${t.id}-${s}`;
+            const name   = assignments[seatId] || '';
+            if (name) {
+                rows.push(`${seatId},テーブル${t.id},${s}番席,${name}`);
+            }
+        }
+    });
+    if (rows.length === 1) { alert('まだ座席が割り当てられていません。'); return; }
+    downloadFile(rows.join('\n'), 'offkai-canva.csv', 'text/csv');
+    closeCanvaModal();
+}
+
+function downloadFile(content, filename, type) {
+    const BOM  = '﻿';
+    const blob = new Blob([BOM + content], { type: `${type};charset=utf-8;` });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href = url; a.download = filename; a.click();
+    URL.revokeObjectURL(url);
+}
+
+function clearAll() {
+    if (!confirm('全ての座席割り当てをクリアします。この操作は取り消せません。')) return;
+    assignments = {};
+    saveData();
+}
+
+// ═══════════════════════════════════════════════════════════
+// SEARCH
+// ═══════════════════════════════════════════════════════════
+
+function onSearch() {
+    const q = document.getElementById('searchInput').value.trim();
+    const res = document.getElementById('searchResults');
+    if (!q) { res.innerHTML = ''; return; }
+
+    const matches = Object.entries(assignments)
+        .filter(([, name]) => name.includes(q))
+        .slice(0, 8);
+
+    if (matches.length === 0) {
+        res.innerHTML = '<div class="search-item" style="color:#999">見つかりませんでした</div>';
+        return;
+    }
+
+    res.innerHTML = matches.map(([seatId, name]) => {
+        const [table, seat] = seatId.split('-');
+        return `<div class="search-item" onclick="jumpTo('${seatId}')">
+            <div>${escHtml(name)}</div>
+            <div class="si-loc">テーブル${table} - ${seat}番席</div>
+        </div>`;
+    }).join('');
+}
+
+function jumpTo(seatId) {
+    const [table] = seatId.split('-');
+    selectTable(table);
+    document.getElementById('searchInput').value = '';
+    document.getElementById('searchResults').innerHTML = '';
+    // switch to map view if needed
+    activateView('map');
+}
+
+// ═══════════════════════════════════════════════════════════
+// VIEW TABS
+// ═══════════════════════════════════════════════════════════
+
+function activateView(view) {
+    document.querySelectorAll('.view-tab').forEach(t => {
+        t.classList.toggle('active', t.dataset.view === view);
+    });
+    document.getElementById('venueView').style.display = view === 'map' ? '' : 'none';
+    document.getElementById('listView').classList.toggle('active', view === 'list');
+    if (view === 'list') renderList();
+}
+
+document.querySelectorAll('.view-tab').forEach(tab => {
+    tab.addEventListener('click', () => activateView(tab.dataset.view));
+});
+
+// ═══════════════════════════════════════════════════════════
+// KEYBOARD SHORTCUTS & EVENT LISTENERS
+// ═══════════════════════════════════════════════════════════
+
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+        closeModal();
+        closeAutoModal();
+        closeCanvaModal();
+    }
+});
+
+document.getElementById('modalInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') saveSeat();
+});
+
+// Close modals on overlay click
+['seatModal','canvaModal','autoModal'].forEach(id => {
+    document.getElementById(id).addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeModal(); closeCanvaModal(); closeAutoModal();
+        }
+    });
+});
+
+// ═══════════════════════════════════════════════════════════
+// UTILITIES
+// ═══════════════════════════════════════════════════════════
+
+function escHtml(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ═══════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════
+
+loadData();
+renderVenue();
+updateStats();
+</script>
+</body>
+</html>
