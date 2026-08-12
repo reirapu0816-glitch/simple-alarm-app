@@ -913,26 +913,16 @@ function handleXlsxFile(file, e) {
 }
 
 function downloadTemplate() {
-    if (typeof XLSX !== 'undefined') {
-        const aoa = [['テーブル', '席番号', '席ID', 'お名前']];
-        TABLE_LAYOUT.forEach(t => {
-            for (let s = 1; s <= SEATS_PER_TABLE; s++) {
-                aoa.push([t.id, s, `${t.id}-${s}`, '']);
-            }
-        });
-        const ws = XLSX.utils.aoa_to_sheet(aoa);
-        ws['!cols'] = [{wch:8},{wch:8},{wch:8},{wch:20}];
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, '座席割当');
-        XLSX.writeFile(wb, 'offkai-seating-template.xlsx');
-    } else {
-        const rows = ['テーブル,席番号,席ID,お名前'];
-        TABLE_LAYOUT.forEach(t => {
-            for (let s = 1; s <= SEATS_PER_TABLE; s++) {
-                rows.push(`${t.id},${s},${t.id}-${s},`);
-            }
-        });
+    const rows = ['テーブル,席番号,席ID,お名前'];
+    TABLE_LAYOUT.forEach(t => {
+        for (let s = 1; s <= SEATS_PER_TABLE; s++) {
+            rows.push(`${t.id},${s},${t.id}-${s},`);
+        }
+    });
+    try {
         downloadFile(rows.join('\n'), 'offkai-seating-template.csv', 'text/csv');
+    } catch(e) {
+        alert('ダウンロードに失敗しました: ' + e.message);
     }
 }
 
