@@ -924,10 +924,10 @@ function handleXlsxFile(file, e) {
 }
 
 function downloadTemplate() {
-    const rows = ['テーブル,席番号,席ID,お名前'];
+    const rows = ['席ID,お名前'];
     TABLE_LAYOUT.forEach(t => {
         for (let s = 1; s <= SEATS_PER_TABLE; s++) {
-            rows.push(`${t.id},${s},${t.id}-${s},`);
+            rows.push(`${t.id}-${s},`);
         }
     });
     try {
