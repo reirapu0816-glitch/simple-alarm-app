@@ -850,7 +850,17 @@ function parseRows(rows) {
     let count = 0;
     rows.forEach(parts => {
         parts = parts.map(p => String(p || '').trim().replace(/^"|"$/g, ''));
-        if (parts.length >= 3) {
+        if (parts.length >= 4) {
+            // 4列形式: テーブル, 席番号, 席ID, お名前
+            const tbl  = parts[0].toUpperCase();
+            const seat = parseInt(parts[1]);
+            const name = parts[3];
+            if (TABLE_LAYOUT.find(t => t.id === tbl) && seat >= 1 && seat <= SEATS_PER_TABLE && name) {
+                assignments[`${tbl}-${seat}`] = name;
+                count++;
+            }
+        } else if (parts.length === 3) {
+            // 3列形式: テーブル, 席番号, お名前
             const tbl  = parts[0].toUpperCase();
             const seat = parseInt(parts[1]);
             const name = parts[2];
@@ -859,6 +869,7 @@ function parseRows(rows) {
                 count++;
             }
         } else if (parts.length === 2 && parts[0].includes('-')) {
+            // 2列形式: 席ID, お名前 (例: D-1, 山田花子)
             const [tbl, seatStr] = parts[0].split('-');
             const seat = parseInt(seatStr);
             const name = parts[1];
