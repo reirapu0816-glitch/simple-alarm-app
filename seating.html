@@ -389,7 +389,8 @@
     <!-- Right panel -->
     <div class="panel">
         <div class="panel-controls">
-            <button class="btn btn-blue"   onclick="importCSV()">📥 CSV読込</button>
+            <button class="btn btn-blue"   onclick="importFile()">📥 CSV/Excel読込</button>
+            <button class="btn btn-gray"   onclick="downloadTemplate()">📋 Excelテンプレ</button>
             <button class="btn btn-green"  onclick="exportCSV()">📤 CSV出力</button>
             <button class="btn btn-orange" onclick="showCanvaHelp()">🎨 Canva連携</button>
             <button class="btn btn-gray"   onclick="autoAssign()">⚡ 自動割当</button>
@@ -452,8 +453,9 @@
     </div>
 </div>
 
-<input type="file" id="csvFile" accept=".csv,.txt" onchange="handleCSVFile(event)">
+<input type="file" id="csvFile" accept=".csv,.txt,.xlsx" onchange="handleImportFile(event)" style="display:none">
 
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script>
 // ═══════════════════════════════════════════════════════════
 // TABLE CONFIGURATION
@@ -461,20 +463,26 @@
 
 // 26 tables, A-Z, each with 10 seats
 const TABLE_LAYOUT = [
-    { id:'A', row:0, col:2 },                           // standalone top
-    { id:'B', row:1, col:0 }, { id:'C', row:1, col:1 },  // row 1 (5 tables)
-    { id:'D', row:1, col:2 }, { id:'E', row:1, col:3 },
-    { id:'F', row:1, col:4 },
-    { id:'G', row:2, col:0 }, { id:'H', row:2, col:1 },  // row 2 (6 tables)
-    { id:'I', row:2, col:2 }, { id:'J', row:2, col:3 },
-    { id:'K', row:2, col:4 }, { id:'L', row:2, col:5 },
-    { id:'M', row:3, col:0 }, { id:'N', row:3, col:1 },  // row 3 (6 tables)
-    { id:'O', row:3, col:2 }, { id:'P', row:3, col:3 },
-    { id:'Q', row:3, col:4 }, { id:'R', row:3, col:5 },
-    { id:'S', row:4, col:0 }, { id:'T', row:4, col:1 },  // row 4 (6 tables)
-    { id:'U', row:4, col:2 }, { id:'V', row:4, col:3 },
-    { id:'W', row:4, col:4 }, { id:'X', row:4, col:5 },
-    { id:'Y', row:5, col:1 }, { id:'Z', row:5, col:2, provisional:true }, // bottom row
+    // Col 0: bottom-to-top (rows 4,3,2,1)
+    { id:'A', row:4, col:0 }, { id:'B', row:3, col:0 },
+    { id:'C', row:2, col:0 }, { id:'D', row:1, col:0 },
+    // Col 1: bottom-to-top (rows 5,4,3,2,1)
+    { id:'E', row:5, col:1 }, { id:'F', row:4, col:1 },
+    { id:'G', row:3, col:1 }, { id:'H', row:2, col:1 },
+    { id:'I', row:1, col:1 },
+    // Col 2: bottom-to-top (rows 5,4,3,2,1,0)
+    { id:'J', row:5, col:2, provisional:true }, { id:'K', row:4, col:2 },
+    { id:'L', row:3, col:2 }, { id:'M', row:2, col:2 },
+    { id:'N', row:1, col:2 }, { id:'O', row:0, col:2 },
+    // Col 3: bottom-to-top (rows 4,3,2,1)
+    { id:'P', row:4, col:3 }, { id:'Q', row:3, col:3 },
+    { id:'R', row:2, col:3 }, { id:'S', row:1, col:3 },
+    // Col 4: bottom-to-top (rows 4,3,2,1)
+    { id:'T', row:4, col:4 }, { id:'U', row:3, col:4 },
+    { id:'V', row:2, col:4 }, { id:'W', row:1, col:4 },
+    // Col 5: bottom-to-top (rows 4,3,2; row 1 = 柱)
+    { id:'X', row:4, col:5 }, { id:'Y', row:3, col:5 },
+    { id:'Z', row:2, col:5 },
 ];
 
 const SEATS_PER_TABLE = 10;
@@ -826,41 +834,106 @@ function filterList() {
 // CSV IMPORT / EXPORT
 // ═══════════════════════════════════════════════════════════
 
-function importCSV() { document.getElementById('csvFile').click(); }
+function importFile() { document.getElementById('csvFile').click(); }
 
-function handleCSVFile(e) {
+function handleImportFile(e) {
     const file = e.target.files[0];
     if (!file) return;
+    if (file.name.toLowerCase().endsWith('.xlsx')) {
+        handleXlsxFile(file, e);
+    } else {
+        handleCSVFile(file, e);
+    }
+}
+
+function parseRows(rows) {
+    let count = 0;
+    rows.forEach(parts => {
+        parts = parts.map(p => String(p || '').trim().replace(/^"|"$/g, ''));
+        if (parts.length >= 3) {
+            const tbl  = parts[0].toUpperCase();
+            const seat = parseInt(parts[1]);
+            const name = parts[2];
+            if (TABLE_LAYOUT.find(t => t.id === tbl) && seat >= 1 && seat <= SEATS_PER_TABLE && name) {
+                assignments[`${tbl}-${seat}`] = name;
+                count++;
+            }
+        } else if (parts.length === 2 && parts[0].includes('-')) {
+            const [tbl, seatStr] = parts[0].split('-');
+            const seat = parseInt(seatStr);
+            const name = parts[1];
+            if (TABLE_LAYOUT.find(t => t.id === tbl.toUpperCase()) && seat >= 1 && seat <= SEATS_PER_TABLE && name) {
+                assignments[`${tbl.toUpperCase()}-${seat}`] = name;
+                count++;
+            }
+        }
+    });
+    return count;
+}
+
+function handleCSVFile(file, e) {
     const reader = new FileReader();
     reader.onload = ev => {
         const lines = ev.target.result.split('\n').map(l => l.trim()).filter(Boolean);
-        let count = 0;
-        lines.forEach(line => {
-            const parts = line.split(',').map(p => p.trim().replace(/^"|"$/g, ''));
-            // Format: table, seat, name  OR  A-1, name
-            if (parts.length >= 3) {
-                const tbl  = parts[0].toUpperCase();
-                const seat = parseInt(parts[1]);
-                const name = parts[2];
-                if (TABLE_LAYOUT.find(t => t.id === tbl) && seat >= 1 && seat <= SEATS_PER_TABLE && name) {
-                    assignments[`${tbl}-${seat}`] = name;
-                    count++;
-                }
-            } else if (parts.length === 2 && parts[0].includes('-')) {
-                const [tbl, seatStr] = parts[0].split('-');
-                const seat = parseInt(seatStr);
-                const name = parts[1];
-                if (TABLE_LAYOUT.find(t => t.id === tbl.toUpperCase()) && seat >= 1 && seat <= SEATS_PER_TABLE && name) {
-                    assignments[`${tbl.toUpperCase()}-${seat}`] = name;
-                    count++;
-                }
-            }
-        });
+        const rows = lines.map(line => line.split(','));
+        const headerRow = rows[0] && rows[0][0] && isNaN(rows[0][0]) && !TABLE_LAYOUT.find(t => t.id === rows[0][0].toUpperCase());
+        const dataRows = headerRow ? rows.slice(1) : rows;
+        const count = parseRows(dataRows);
         saveData();
         alert(`${count}件の座席割り当てを読み込みました。`);
         e.target.value = '';
     };
     reader.readAsText(file, 'UTF-8');
+}
+
+function handleXlsxFile(file, e) {
+    if (typeof XLSX === 'undefined') {
+        alert('Excel読込ライブラリの読み込みに失敗しました。ネットワーク接続を確認してください。');
+        e.target.value = '';
+        return;
+    }
+    const reader = new FileReader();
+    reader.onload = ev => {
+        try {
+            const wb = XLSX.read(ev.target.result, { type: 'array' });
+            const ws = wb.Sheets[wb.SheetNames[0]];
+            const data = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
+            const firstCell = String(data[0] && data[0][0] || '');
+            const isHeader = isNaN(firstCell) && !TABLE_LAYOUT.find(t => t.id === firstCell.toUpperCase());
+            const dataRows = isHeader ? data.slice(1) : data;
+            const count = parseRows(dataRows);
+            saveData();
+            alert(`${count}件の座席割り当てを読み込みました。`);
+        } catch(err) {
+            alert('Excelファイルの読み込みに失敗しました: ' + err.message);
+        }
+        e.target.value = '';
+    };
+    reader.readAsArrayBuffer(file);
+}
+
+function downloadTemplate() {
+    if (typeof XLSX !== 'undefined') {
+        const aoa = [['テーブル', '席番号', '席ID', 'お名前']];
+        TABLE_LAYOUT.forEach(t => {
+            for (let s = 1; s <= SEATS_PER_TABLE; s++) {
+                aoa.push([t.id, s, `${t.id}-${s}`, '']);
+            }
+        });
+        const ws = XLSX.utils.aoa_to_sheet(aoa);
+        ws['!cols'] = [{wch:8},{wch:8},{wch:8},{wch:20}];
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, '座席割当');
+        XLSX.writeFile(wb, 'offkai-seating-template.xlsx');
+    } else {
+        const rows = ['テーブル,席番号,席ID,お名前'];
+        TABLE_LAYOUT.forEach(t => {
+            for (let s = 1; s <= SEATS_PER_TABLE; s++) {
+                rows.push(`${t.id},${s},${t.id}-${s},`);
+            }
+        });
+        downloadFile(rows.join('\n'), 'offkai-seating-template.csv', 'text/csv');
+    }
 }
 
 function exportCSV() {
