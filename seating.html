@@ -389,6 +389,7 @@
     <!-- Right panel -->
     <div class="panel">
         <div class="panel-controls">
+            <button class="btn btn-blue"   onclick="showBulkInput()">✏️ まとめて入力</button>
             <button class="btn btn-blue"   onclick="importFile()">📥 CSV/Excel読込</button>
             <button class="btn btn-gray"   onclick="downloadTemplate()">📋 Excelテンプレ</button>
             <button class="btn btn-green"  onclick="exportCSV()">📤 CSV出力</button>
@@ -435,6 +436,21 @@
         <div class="modal-actions">
             <button class="btn btn-gray"  onclick="closeCanvaModal()">閉じる</button>
             <button class="btn btn-green" onclick="exportForCanva()">Canva用CSV出力</button>
+        </div>
+    </div>
+</div>
+
+<!-- ─── Bulk input modal ─── -->
+<div class="modal-overlay" id="bulkModal">
+    <div class="modal" style="max-width:480px">
+        <h3>✏️ まとめて入力</h3>
+        <div class="modal-sub">1行1人、「名前：席ID」の形式で入力してください</div>
+        <textarea id="bulkInput" style="width:100%;height:200px;padding:10px;border:2px solid #ccc;border-radius:6px;font-size:13px;font-family:inherit;resize:vertical;margin-bottom:8px;"
+            placeholder="古賀杏奈：C1&#10;田中太郎：A3&#10;鈴木花子：B7&#10;&#10;※ 席IDはC1またはC-1どちらでもOK&#10;※ コロンは「：」「:」どちらでもOK"></textarea>
+        <div style="font-size:12px;color:#888;margin-bottom:14px" id="bulkCount">0件</div>
+        <div class="modal-actions">
+            <button class="btn btn-gray" onclick="closeBulkModal()">キャンセル</button>
+            <button class="btn btn-blue" onclick="runBulkInput()">登録</button>
         </div>
     </div>
 </div>
@@ -722,6 +738,71 @@ function clearSeat() {
 // ═══════════════════════════════════════════════════════════
 // AUTO ASSIGN MODAL
 // ═══════════════════════════════════════════════════════════
+
+// ═══════════════════════════════════════════════════════════
+// BULK INPUT  (名前：席ID 形式)
+// ═══════════════════════════════════════════════════════════
+
+function showBulkInput() {
+    document.getElementById('bulkInput').value = '';
+    document.getElementById('bulkCount').textContent = '0件';
+    document.getElementById('bulkModal').classList.add('open');
+}
+
+function closeBulkModal() {
+    document.getElementById('bulkModal').classList.remove('open');
+}
+
+function parseBulkLine(line) {
+    // 区切り文字: 「：」「:」「,」「　」（全角スペース）
+    const m = line.match(/^(.+?)[：:,　\t](.+)$/);
+    if (!m) return null;
+    let [, a, b] = m;
+    a = a.trim(); b = b.trim();
+    // どちらが席IDかを判定（先頭が英字1文字 + 数字）
+    const seatRe = /^([A-Za-z])-?(\d+)$/;
+    let name, seatId;
+    if (seatRe.test(a)) {
+        const [, t, s] = a.match(seatRe);
+        seatId = `${t.toUpperCase()}-${s}`; name = b;
+    } else if (seatRe.test(b)) {
+        const [, t, s] = b.match(seatRe);
+        seatId = `${t.toUpperCase()}-${s}`; name = a;
+    } else return null;
+    const [tbl, seatStr] = seatId.split('-');
+    const seat = parseInt(seatStr);
+    if (!TABLE_LAYOUT.find(t => t.id === tbl) || seat < 1 || seat > SEATS_PER_TABLE) return null;
+    return { seatId, name };
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const ta = document.getElementById('bulkInput');
+    if (ta) ta.addEventListener('input', () => {
+        const lines = ta.value.split('\n').filter(l => l.trim());
+        const valid = lines.filter(l => parseBulkLine(l));
+        document.getElementById('bulkCount').textContent = `${valid.length}件 認識`;
+    });
+});
+
+function runBulkInput() {
+    const lines = document.getElementById('bulkInput').value.split('\n');
+    let count = 0, errors = [];
+    lines.forEach(line => {
+        if (!line.trim()) return;
+        const result = parseBulkLine(line);
+        if (result) {
+            assignments[result.seatId] = result.name;
+            count++;
+        } else {
+            errors.push(line.trim());
+        }
+    });
+    saveData();
+    closeBulkModal();
+    let msg = `${count}件を登録しました。`;
+    if (errors.length) msg += `\n\n認識できなかった行:\n${errors.join('\n')}`;
+    alert(msg);
+}
 
 function autoAssign() {
     document.getElementById('autoInput').value = '';
@@ -1049,6 +1130,7 @@ document.addEventListener('keydown', e => {
         closeModal();
         closeAutoModal();
         closeCanvaModal();
+        closeBulkModal();
     }
 });
 
@@ -1057,10 +1139,10 @@ document.getElementById('modalInput').addEventListener('keydown', e => {
 });
 
 // Close modals on overlay click
-['seatModal','canvaModal','autoModal'].forEach(id => {
+['seatModal','canvaModal','autoModal','bulkModal'].forEach(id => {
     document.getElementById(id).addEventListener('click', function(e) {
         if (e.target === this) {
-            closeModal(); closeCanvaModal(); closeAutoModal();
+            closeModal(); closeCanvaModal(); closeAutoModal(); closeBulkModal();
         }
     });
 });
