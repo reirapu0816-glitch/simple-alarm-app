@@ -666,8 +666,8 @@ function renderPanel(id) {
 
     const topRow = document.getElementById('srow-top');
     const botRow = document.getElementById('srow-bot');
-    for (let s = 6; s <= SEATS_PER_TABLE; s++) topRow.appendChild(makeSeatBtn(id, s));
-    for (let s = 1; s <= 5; s++)          botRow.appendChild(makeSeatBtn(id, s));
+    for (let s = 1; s <= 5; s++)          topRow.appendChild(makeSeatBtn(id, s));
+    for (let s = 6; s <= SEATS_PER_TABLE; s++) botRow.appendChild(makeSeatBtn(id, s));
 }
 
 function makeSeatBtn(tableId, seatNum) {
