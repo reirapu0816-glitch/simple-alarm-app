@@ -477,28 +477,28 @@
 // TABLE CONFIGURATION
 // ═══════════════════════════════════════════════════════════
 
-// 26 tables, A-Z, each with 10 seats
+// 23 tables, A-W, each with 10 seats
 const TABLE_LAYOUT = [
-    // Col 0: bottom-to-top (rows 4,3,2,1)
+    // Col 0: bottom-to-top (rows 4→0) = A,B,C,D,E
     { id:'A', row:4, col:0 }, { id:'B', row:3, col:0 },
     { id:'C', row:2, col:0 }, { id:'D', row:1, col:0 },
-    // Col 1: bottom-to-top (rows 5,4,3,2,1)
-    { id:'E', row:5, col:1 }, { id:'F', row:4, col:1 },
-    { id:'G', row:3, col:1 }, { id:'H', row:2, col:1 },
-    { id:'I', row:1, col:1 },
-    // Col 2: bottom-to-top (rows 5,4,3,2,1,0)
-    { id:'J', row:5, col:2, provisional:true }, { id:'K', row:4, col:2 },
-    { id:'L', row:3, col:2 }, { id:'M', row:2, col:2 },
-    { id:'N', row:1, col:2 }, { id:'O', row:0, col:2 },
-    // Col 3: bottom-to-top (rows 4,3,2,1)
+    { id:'E', row:0, col:0 },
+    // Col 1: bottom-to-top (rows 4→0) = F,G,H,I,J  + U at row 5
+    { id:'F', row:4, col:1 }, { id:'G', row:3, col:1 },
+    { id:'H', row:2, col:1 }, { id:'I', row:1, col:1 },
+    { id:'J', row:0, col:1 },
+    { id:'U', row:5, col:1 },
+    // Col 2: bottom-to-top (rows 4→0) = K,L,M,N,O  + V at row 5
+    { id:'K', row:4, col:2 }, { id:'L', row:3, col:2 },
+    { id:'M', row:2, col:2 }, { id:'N', row:1, col:2 },
+    { id:'O', row:0, col:2 },
+    { id:'V', row:5, col:2 },
+    // Col 3: bottom-to-top (rows 4→0) = P,Q,R,S,T
     { id:'P', row:4, col:3 }, { id:'Q', row:3, col:3 },
     { id:'R', row:2, col:3 }, { id:'S', row:1, col:3 },
-    // Col 4: bottom-to-top (rows 4,3,2,1)
-    { id:'T', row:4, col:4 }, { id:'U', row:3, col:4 },
-    { id:'V', row:2, col:4 }, { id:'W', row:1, col:4 },
-    // Col 5: bottom-to-top (rows 4,3,2; row 1 = 柱)
-    { id:'X', row:4, col:5 }, { id:'Y', row:3, col:5 },
-    { id:'Z', row:2, col:5 },
+    { id:'T', row:0, col:3 },
+    // Col 4: W のみ (row 0)
+    { id:'W', row:0, col:4 },
 ];
 
 const SEATS_PER_TABLE = 10;
@@ -586,10 +586,6 @@ function renderVenue() {
     addEl(venue, 'div', {top:'622px',left:'89px',width:'570px',height:'28px'}, 'vl dark', 'キッチン');
     addEl(venue, 'div', {top:'622px',left:'662px',width:'258px',height:'28px'}, 'vl', '入り口');
 
-    // ── Pillar (col 5, row 1) ──
-    const pillarLeft = V.tableAreaLeft + 5 * V.colStep + Math.floor((V.colStep - 50) / 2);
-    const pillarTop  = V.tableAreaTop  + 1 * V.rowStep + Math.floor((V.tableH - 50) / 2);
-    addEl(venue, 'div', {top:pillarTop+'px',left:pillarLeft+'px',width:'50px',height:'50px'}, 'vl pillar', '柱');
 
     // ── Table blocks ──
     TABLE_LAYOUT.forEach(t => {
