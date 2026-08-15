@@ -780,11 +780,24 @@ function renderPanel(id) {
             </div>
             <div class="seats-row" id="srow-bot"></div>
         </div>
-        <div style="margin-top:16px;border-top:1px solid #eee;padding-top:12px;display:flex;gap:8px;flex-wrap:wrap">
-            <button class="btn" style="font-size:11px;padding:5px 10px;background:#e3f2fd;color:#1565c0;border:1px solid #90caf9"
-                onclick="moveTable()">→ 別テーブルへ移動</button>
-            <button class="btn btn-red" style="font-size:11px;padding:5px 10px"
-                onclick="clearTable('${id}')">テーブル${id}を全クリア</button>
+        <div style="margin-top:16px;border-top:1px solid #eee;padding-top:12px">
+            <div id="moveForm" style="display:none;flex-direction:column;gap:6px;margin-bottom:8px;padding:8px;background:#e3f2fd;border-radius:6px;border:1px solid #90caf9">
+                <div style="font-size:11px;color:#1565c0;font-weight:600">移動先テーブル名を入力</div>
+                <div style="display:flex;gap:6px;align-items:center">
+                    <input id="moveTarget" type="text" maxlength="1" placeholder="例: P"
+                        style="border:1px solid #90caf9;border-radius:4px;padding:4px 8px;font-size:14px;width:70px;text-transform:uppercase">
+                    <button class="btn" style="font-size:11px;padding:5px 12px;background:#1565c0;color:white;border:none"
+                        onclick="executeMoveTable()">移動</button>
+                    <button class="btn" style="font-size:11px;padding:5px 10px"
+                        onclick="document.getElementById('moveForm').style.display='none'">✕</button>
+                </div>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <button class="btn" style="font-size:11px;padding:5px 10px;background:#e3f2fd;color:#1565c0;border:1px solid #90caf9"
+                    onclick="toggleMoveForm()">→ 別テーブルへ移動</button>
+                <button class="btn btn-red" style="font-size:11px;padding:5px 10px"
+                    onclick="clearTable('${id}')">テーブル${id}を全クリア</button>
+            </div>
         </div>
     `;
 
@@ -817,14 +830,21 @@ function countFilled(id) {
     return n;
 }
 
-function moveTable() {
+function toggleMoveForm() {
+    const form = document.getElementById('moveForm');
+    if (!form) return;
+    const show = form.style.display === 'none';
+    form.style.display = show ? 'flex' : 'none';
+    if (show) { document.getElementById('moveTarget').value = ''; document.getElementById('moveTarget').focus(); }
+}
+
+function executeMoveTable() {
     if (!selectedTable) return;
-    const dest = prompt(`テーブル${selectedTable}の全席をどのテーブルに移動しますか？\n（例: P）`);
-    if (!dest) return;
-    const destId = dest.trim().toUpperCase();
+    const input = document.getElementById('moveTarget');
+    const destId = (input ? input.value : '').trim().toUpperCase();
+    if (!destId) return;
     if (!TABLE_LAYOUT.find(t => t.id === destId)) { alert(`テーブル${destId}は存在しません`); return; }
     if (destId === selectedTable) return;
-    if (!confirm(`テーブル${selectedTable} → テーブル${destId} に移動します。\nテーブル${destId}の現在のデータは上書きされます。`)) return;
     for (let s = 1; s <= SEATS_PER_TABLE; s++) {
         const src = `${selectedTable}-${s}`, dst = `${destId}-${s}`;
         if (assignments[src]) { assignments[dst] = assignments[src]; grades[dst] = grades[src] || ''; }
