@@ -305,9 +305,11 @@
         }
         .nc-chip.empty .nc-name { color: #bbb; font-weight: normal; font-size: 10px; }
         .nc-grade {
-            font-size: 9px; color: white; background: #7986cb;
+            font-size: 9px; font-weight: 700;
+            background: rgba(0,0,0,0.06);
             padding: 0 3px; border-radius: 3px; line-height: 1.5; white-space: nowrap;
         }
+        .nc-chip.staff .nc-grade { background: #e65100; color: white; }
 
         /* Name map toggle button */
         #nameViewBtn {
@@ -595,6 +597,18 @@ const TABLE_LAYOUT = [
 const SEATS_PER_TABLE = 10;
 const TOTAL_SEATS = TABLE_LAYOUT.length * SEATS_PER_TABLE;
 
+const GRADE_COLORS = [
+    '#1565c0','#2e7d32','#6a1b9a','#00695c',
+    '#c62828','#4527a0','#00838f','#558b2f',
+    '#6d4c41','#ad1457'
+];
+function gradeColor(grade) {
+    if (!grade || grade === '運営') return null;
+    const m = grade.match(/(\d+)/);
+    if (!m) return null;
+    return GRADE_COLORS[(parseInt(m[1]) - 1) % GRADE_COLORS.length];
+}
+
 // Venue layout constants
 const V = {
     colStep: 103,
@@ -777,7 +791,7 @@ function makeSeatBtn(tableId, seatNum) {
         <div class="seat-num">${seatNum}番</div>
         ${name
             ? `<div class="seat-name">${escHtml(name)}</div>
-               ${grade ? `<div class="seat-grade${grade === '運営' ? ' staff' : ''}">${escHtml(grade)}</div>` : ''}`
+               ${grade ? `<div class="seat-grade${grade === '運営' ? ' staff' : ''}"${gradeColor(grade) ? ` style="color:${gradeColor(grade)}"` : ''}>${escHtml(grade)}</div>` : ''}`
             : `<div class="seat-empty">－</div>`}
     `;
     btn.addEventListener('click', () => openSeatModal(tableId, seatNum));
@@ -1236,7 +1250,7 @@ function buildNameMapGrid() {
             chip.className = `nc-chip${name ? '' : ' empty'}${grade === '運営' ? ' staff' : ''}`;
             chip.innerHTML = `<span class="nc-num">${s}</span>`
                 + `<span class="nc-name">${name ? escHtml(name) : '空'}</span>`
-                + (grade ? `<span class="nc-grade">${escHtml(grade)}</span>` : '');
+                + (grade ? `<span class="nc-grade"${gradeColor(grade) ? ` style="color:${gradeColor(grade)}"` : ''}>${escHtml(grade)}</span>` : '');
             topRow.appendChild(chip);
         }
         card.appendChild(topRow);
@@ -1258,7 +1272,7 @@ function buildNameMapGrid() {
             chip.className = `nc-chip${name ? '' : ' empty'}${grade === '運営' ? ' staff' : ''}`;
             chip.innerHTML = `<span class="nc-num">${s}</span>`
                 + `<span class="nc-name">${name ? escHtml(name) : '空'}</span>`
-                + (grade ? `<span class="nc-grade">${escHtml(grade)}</span>` : '');
+                + (grade ? `<span class="nc-grade"${gradeColor(grade) ? ` style="color:${gradeColor(grade)}"` : ''}>${escHtml(grade)}</span>` : '');
             botRow.appendChild(chip);
         }
         card.appendChild(botRow);
