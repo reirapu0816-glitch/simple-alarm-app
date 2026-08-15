@@ -249,6 +249,7 @@
             border-radius: 8px;
             overflow: hidden;
             box-shadow: 0 2px 8px rgba(0,0,0,0.14);
+            min-width: max-content;
         }
         /* top/bottom seat rows */
         .nc-seat-row {
@@ -277,12 +278,14 @@
             flex-direction: column;
             align-items: center;
             width: 64px;
+            min-width: 64px;
             min-height: 52px;
-            padding: 3px 3px;
+            padding: 3px;
             border-radius: 5px;
             background: #e8eaf6;
             gap: 1px;
             text-align: center;
+            flex-shrink: 0;
         }
         .nc-chip.empty { background: #f0f0f0; }
         .nc-num { font-size: 9px; color: #7986cb; font-weight: 700; line-height: 1.3; }
