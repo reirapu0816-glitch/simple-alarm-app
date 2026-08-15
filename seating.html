@@ -232,6 +232,14 @@
         .seat-grade { font-size: 9px; color: #7986cb; }
         .seat-empty { font-size: 10px; color: #ccc; }
 
+        /* ─── 運営 highlight ─── */
+        .seat-btn.staff { border-color: #fb8c00; background: #fff8f0; }
+        .seat-btn.staff:hover { background: #ffe0b2; border-color: #e65100; }
+        .seat-grade.staff { color: #e65100; font-weight: 700; }
+        .nc-chip.staff { background: #fff3e0; outline: 2px solid #fb8c00; outline-offset: -2px; }
+        .nc-chip.staff .nc-num { color: #e65100; }
+        .nc-chip.staff .nc-grade { background: #e65100; }
+
         /* ─── Name map grid (spatial seating chart) ─── */
         .name-map-grid {
             display: none;
@@ -764,12 +772,12 @@ function makeSeatBtn(tableId, seatNum) {
     const name   = assignments[seatId] || '';
     const grade  = grades[seatId] || '';
     const btn    = document.createElement('div');
-    btn.className = 'seat-btn' + (name ? ' occupied' : '');
+    btn.className = 'seat-btn' + (name ? ' occupied' : '') + (grade === '運営' ? ' staff' : '');
     btn.innerHTML = `
         <div class="seat-num">${seatNum}番</div>
         ${name
             ? `<div class="seat-name">${escHtml(name)}</div>
-               ${grade ? `<div class="seat-grade">${escHtml(grade)}</div>` : ''}`
+               ${grade ? `<div class="seat-grade${grade === '運営' ? ' staff' : ''}">${escHtml(grade)}</div>` : ''}`
             : `<div class="seat-empty">－</div>`}
     `;
     btn.addEventListener('click', () => openSeatModal(tableId, seatNum));
@@ -1225,7 +1233,7 @@ function buildNameMapGrid() {
             const name = assignments[sid] || '';
             const grade = grades[sid] || '';
             const chip = document.createElement('div');
-            chip.className = `nc-chip${name ? '' : ' empty'}`;
+            chip.className = `nc-chip${name ? '' : ' empty'}${grade === '運営' ? ' staff' : ''}`;
             chip.innerHTML = `<span class="nc-num">${s}</span>`
                 + `<span class="nc-name">${name ? escHtml(name) : '空'}</span>`
                 + (grade ? `<span class="nc-grade">${escHtml(grade)}</span>` : '');
@@ -1247,7 +1255,7 @@ function buildNameMapGrid() {
             const name = assignments[sid] || '';
             const grade = grades[sid] || '';
             const chip = document.createElement('div');
-            chip.className = `nc-chip${name ? '' : ' empty'}`;
+            chip.className = `nc-chip${name ? '' : ' empty'}${grade === '運営' ? ' staff' : ''}`;
             chip.innerHTML = `<span class="nc-num">${s}</span>`
                 + `<span class="nc-name">${name ? escHtml(name) : '空'}</span>`
                 + (grade ? `<span class="nc-grade">${escHtml(grade)}</span>` : '');
