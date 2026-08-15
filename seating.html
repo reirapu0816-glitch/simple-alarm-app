@@ -246,7 +246,7 @@
         /* ─── Name map grid (spatial seating chart) ─── */
         .name-map-grid {
             display: none;
-            grid-template-columns: repeat(5, auto);
+            grid-template-columns: repeat(6, auto);
             grid-template-rows: repeat(6, auto);
             gap: 16px 20px;
             padding: 20px;
@@ -573,28 +573,28 @@
 // TABLE CONFIGURATION
 // ═══════════════════════════════════════════════════════════
 
-// 23 tables, A-W, each with 10 seats
+// 22 tables, A-W (no U), each with 10 seats
 const TABLE_LAYOUT = [
     // Col 0: bottom-to-top (rows 4→0) = A,B,C,D,E
     { id:'A', row:4, col:0 }, { id:'B', row:3, col:0 },
     { id:'C', row:2, col:0 }, { id:'D', row:1, col:0 },
     { id:'E', row:0, col:0 },
-    // Col 1: bottom-to-top (rows 4→0) = F,G,H,I,J  + U at row 5
+    // Col 1: bottom-to-top (rows 4→0) = F,G,H,I,J
     { id:'F', row:4, col:1 }, { id:'G', row:3, col:1 },
     { id:'H', row:2, col:1 }, { id:'I', row:1, col:1 },
     { id:'J', row:0, col:1 },
-    { id:'U', row:5, col:1 },
-    // Col 2: bottom-to-top (rows 4→0) = K,L,M,N,O  + V at row 5
-    { id:'K', row:4, col:2 }, { id:'L', row:3, col:2 },
-    { id:'M', row:2, col:2 }, { id:'N', row:1, col:2 },
-    { id:'O', row:0, col:2 },
+    // Col 2: V のみ (row 5) — F列とK列の間
     { id:'V', row:5, col:2 },
-    // Col 3: bottom-to-top (rows 4→0) = P,Q,R,S,T
-    { id:'P', row:4, col:3 }, { id:'Q', row:3, col:3 },
-    { id:'R', row:2, col:3 }, { id:'S', row:1, col:3 },
-    { id:'T', row:0, col:3 },
-    // Col 4: W のみ (row 0)
-    { id:'W', row:0, col:4 },
+    // Col 3: bottom-to-top (rows 4→0) = K,L,M,N,O
+    { id:'K', row:4, col:3 }, { id:'L', row:3, col:3 },
+    { id:'M', row:2, col:3 }, { id:'N', row:1, col:3 },
+    { id:'O', row:0, col:3 },
+    // Col 4: bottom-to-top (rows 4→0) = P,Q,R,S,T
+    { id:'P', row:4, col:4 }, { id:'Q', row:3, col:4 },
+    { id:'R', row:2, col:4 }, { id:'S', row:1, col:4 },
+    { id:'T', row:0, col:4 },
+    // Col 5: W のみ (row 0)
+    { id:'W', row:0, col:5 },
 ];
 
 const SEATS_PER_TABLE = 10;
