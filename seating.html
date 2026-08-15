@@ -211,7 +211,10 @@
         .sel-title { font-size: 16px; font-weight: bold; margin-bottom: 2px; }
         .sel-sub { font-size: 12px; color: #888; margin-bottom: 14px; }
         .seats-section { margin-bottom: 12px; }
-        .seats-label { font-size: 10px; color: #999; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 5px; }
+        .seats-label-row { display: flex; align-items: center; gap: 5px; margin-bottom: 5px; }
+        .seats-label { font-size: 10px; color: #999; font-weight: 700; letter-spacing: 0.8px; text-transform: uppercase; flex: 1; }
+        .shift-btn { font-size: 11px; padding: 1px 7px; border: 1px solid #cfd8dc; border-radius: 3px; background: white; cursor: pointer; color: #555; line-height: 1.6; }
+        .shift-btn:hover { background: #f5f5f5; border-color: #90a4ae; }
         .seats-row { display: flex; gap: 5px; }
         .seat-btn {
             flex: 1;
@@ -762,11 +765,19 @@ function renderPanel(id) {
         <div class="sel-title">テーブル ${id} ${statusBadge}</div>
         <div class="sel-sub">${filled}/${SEATS_PER_TABLE}席割り当て済${t.provisional ? '　⚠️ 仮設定テーブル' : ''}</div>
         <div class="seats-section">
-            <div class="seats-label">上側の席 (1〜5番)</div>
+            <div class="seats-label-row">
+                <span class="seats-label">上側の席 (1〜5番)</span>
+                <button class="shift-btn" onclick="shiftRow('top','left')" title="左にずらす">◀</button>
+                <button class="shift-btn" onclick="shiftRow('top','right')" title="右にずらす">▶</button>
+            </div>
             <div class="seats-row" id="srow-top"></div>
         </div>
         <div class="seats-section">
-            <div class="seats-label">下側の席 (6〜10番)</div>
+            <div class="seats-label-row">
+                <span class="seats-label">下側の席 (6〜10番)</span>
+                <button class="shift-btn" onclick="shiftRow('bot','left')" title="左にずらす">◀</button>
+                <button class="shift-btn" onclick="shiftRow('bot','right')" title="右にずらす">▶</button>
+            </div>
             <div class="seats-row" id="srow-bot"></div>
         </div>
         <div style="margin-top:16px;border-top:1px solid #eee;padding-top:12px">
@@ -802,6 +813,32 @@ function countFilled(id) {
     let n = 0;
     for (let s = 1; s <= SEATS_PER_TABLE; s++) if (assignments[`${id}-${s}`]) n++;
     return n;
+}
+
+function shiftRow(row, dir) {
+    if (!selectedTable) return;
+    const [start, end] = row === 'top' ? [1, 5] : [6, 10];
+    if (dir === 'right') {
+        for (let s = end; s > start; s--) {
+            const prev = `${selectedTable}-${s - 1}`;
+            const cur  = `${selectedTable}-${s}`;
+            if (assignments[prev]) { assignments[cur] = assignments[prev]; grades[cur] = grades[prev] || ''; }
+            else { delete assignments[cur]; delete grades[cur]; }
+        }
+        delete assignments[`${selectedTable}-${start}`];
+        delete grades[`${selectedTable}-${start}`];
+    } else {
+        for (let s = start; s < end; s++) {
+            const next = `${selectedTable}-${s + 1}`;
+            const cur  = `${selectedTable}-${s}`;
+            if (assignments[next]) { assignments[cur] = assignments[next]; grades[cur] = grades[next] || ''; }
+            else { delete assignments[cur]; delete grades[cur]; }
+        }
+        delete assignments[`${selectedTable}-${end}`];
+        delete grades[`${selectedTable}-${end}`];
+    }
+    saveData();
+    renderPanel(selectedTable);
 }
 
 function clearTable(id) {
