@@ -780,7 +780,9 @@ function renderPanel(id) {
             </div>
             <div class="seats-row" id="srow-bot"></div>
         </div>
-        <div style="margin-top:16px;border-top:1px solid #eee;padding-top:12px">
+        <div style="margin-top:16px;border-top:1px solid #eee;padding-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn" style="font-size:11px;padding:5px 10px;background:#e3f2fd;color:#1565c0;border:1px solid #90caf9"
+                onclick="moveTable()">→ 別テーブルへ移動</button>
             <button class="btn btn-red" style="font-size:11px;padding:5px 10px"
                 onclick="clearTable('${id}')">テーブル${id}を全クリア</button>
         </div>
@@ -813,6 +815,25 @@ function countFilled(id) {
     let n = 0;
     for (let s = 1; s <= SEATS_PER_TABLE; s++) if (assignments[`${id}-${s}`]) n++;
     return n;
+}
+
+function moveTable() {
+    if (!selectedTable) return;
+    const dest = prompt(`テーブル${selectedTable}の全席をどのテーブルに移動しますか？\n（例: P）`);
+    if (!dest) return;
+    const destId = dest.trim().toUpperCase();
+    if (!TABLE_LAYOUT.find(t => t.id === destId)) { alert(`テーブル${destId}は存在しません`); return; }
+    if (destId === selectedTable) return;
+    if (!confirm(`テーブル${selectedTable} → テーブル${destId} に移動します。\nテーブル${destId}の現在のデータは上書きされます。`)) return;
+    for (let s = 1; s <= SEATS_PER_TABLE; s++) {
+        const src = `${selectedTable}-${s}`, dst = `${destId}-${s}`;
+        if (assignments[src]) { assignments[dst] = assignments[src]; grades[dst] = grades[src] || ''; }
+        else { delete assignments[dst]; delete grades[dst]; }
+        delete assignments[src]; delete grades[src];
+    }
+    saveData();
+    renderPanel(destId);
+    selectedTable = destId;
 }
 
 function shiftRow(row, dir) {
