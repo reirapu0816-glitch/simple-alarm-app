@@ -589,16 +589,17 @@ const TABLE_LAYOUT = [
     { id:'M', row:2, col:2 }, { id:'N', row:1, col:2 },
     { id:'O', row:0, col:2 },
     { id:'V', row:5, col:2 },
-    // Col 3: bottom-to-top (rows 4→0) = P,Q,R,S,T
-    { id:'P', row:4, col:3 }, { id:'Q', row:3, col:3 },
-    { id:'R', row:2, col:3 }, { id:'S', row:1, col:3 },
+    // Col 3: bottom-to-top (rows 4→0) = P,Q,R,S,T (P-S は12人席)
+    { id:'P', row:4, col:3, seats:12 }, { id:'Q', row:3, col:3, seats:12 },
+    { id:'R', row:2, col:3, seats:12 }, { id:'S', row:1, col:3, seats:12 },
     { id:'T', row:0, col:3 },
     // Col 4: W のみ (row 0)
     { id:'W', row:0, col:4 },
 ];
 
 const SEATS_PER_TABLE = 10;
-const TOTAL_SEATS = TABLE_LAYOUT.length * SEATS_PER_TABLE;
+function tableSeats(id) { return TABLE_LAYOUT.find(t => t.id === id)?.seats || SEATS_PER_TABLE; }
+const TOTAL_SEATS = TABLE_LAYOUT.reduce((sum, t) => sum + (t.seats || SEATS_PER_TABLE), 0);
 
 const GRADE_COLORS = [
     '#1565c0','#2e7d32','#6a1b9a','#00695c',
@@ -725,17 +726,18 @@ function renderTableColors() {
         const lbl = document.getElementById('tlbl-' + t.id);
         if (!el) return;
 
+        const tSeats = tableSeats(t.id);
         let filled = 0;
-        for (let s = 1; s <= SEATS_PER_TABLE; s++) {
+        for (let s = 1; s <= tSeats; s++) {
             if (assignments[`${t.id}-${s}`]) filled++;
         }
 
-        if (lbl) lbl.textContent = `${filled}/${SEATS_PER_TABLE}席`;
+        if (lbl) lbl.textContent = `${filled}/${tSeats}席`;
 
         el.classList.remove('st-empty', 'st-partial', 'st-full', 'selected');
-        if (filled === 0)                    el.classList.add('st-empty');
-        else if (filled < SEATS_PER_TABLE)   el.classList.add('st-partial');
-        else                                  el.classList.add('st-full');
+        if (filled === 0)            el.classList.add('st-empty');
+        else if (filled < tSeats)    el.classList.add('st-partial');
+        else                         el.classList.add('st-full');
 
         if (selectedTable === t.id) el.classList.add('selected');
     });
@@ -755,18 +757,20 @@ function renderPanel(id) {
     const t = TABLE_LAYOUT.find(x => x.id === id);
     const body = document.getElementById('panelBody');
     const filled = countFilled(id);
+    const tSeats = tableSeats(id);
+    const half = tSeats / 2;
 
     let statusBadge = '';
-    if (filled === 0)                  statusBadge = '<span class="badge badge-empty">空</span>';
-    else if (filled < SEATS_PER_TABLE) statusBadge = `<span class="badge badge-partial">${filled}名</span>`;
-    else                               statusBadge = `<span class="badge badge-full">満席</span>`;
+    if (filled === 0)           statusBadge = '<span class="badge badge-empty">空</span>';
+    else if (filled < tSeats)   statusBadge = `<span class="badge badge-partial">${filled}名</span>`;
+    else                        statusBadge = `<span class="badge badge-full">満席</span>`;
 
     body.innerHTML = `
         <div class="sel-title">テーブル ${id} ${statusBadge}</div>
-        <div class="sel-sub">${filled}/${SEATS_PER_TABLE}席割り当て済${t.provisional ? '　⚠️ 仮設定テーブル' : ''}</div>
+        <div class="sel-sub">${filled}/${tSeats}席割り当て済${t.provisional ? '　⚠️ 仮設定テーブル' : ''}</div>
         <div class="seats-section">
             <div class="seats-label-row">
-                <span class="seats-label">上側の席 (1〜5番)</span>
+                <span class="seats-label">上側の席 (1〜${half}番)</span>
                 <button class="shift-btn" onclick="shiftRow('top','left')" title="左にずらす">◀</button>
                 <button class="shift-btn" onclick="shiftRow('top','right')" title="右にずらす">▶</button>
             </div>
@@ -774,7 +778,7 @@ function renderPanel(id) {
         </div>
         <div class="seats-section">
             <div class="seats-label-row">
-                <span class="seats-label">下側の席 (6〜10番)</span>
+                <span class="seats-label">下側の席 (${half + 1}〜${tSeats}番)</span>
                 <button class="shift-btn" onclick="shiftRow('bot','left')" title="左にずらす">◀</button>
                 <button class="shift-btn" onclick="shiftRow('bot','right')" title="右にずらす">▶</button>
             </div>
@@ -803,8 +807,8 @@ function renderPanel(id) {
 
     const topRow = document.getElementById('srow-top');
     const botRow = document.getElementById('srow-bot');
-    for (let s = 1; s <= 5; s++)          topRow.appendChild(makeSeatBtn(id, s));
-    for (let s = 6; s <= SEATS_PER_TABLE; s++) botRow.appendChild(makeSeatBtn(id, s));
+    for (let s = 1; s <= half; s++)            topRow.appendChild(makeSeatBtn(id, s));
+    for (let s = half + 1; s <= tSeats; s++)   botRow.appendChild(makeSeatBtn(id, s));
 }
 
 function makeSeatBtn(tableId, seatNum) {
@@ -826,7 +830,7 @@ function makeSeatBtn(tableId, seatNum) {
 
 function countFilled(id) {
     let n = 0;
-    for (let s = 1; s <= SEATS_PER_TABLE; s++) if (assignments[`${id}-${s}`]) n++;
+    for (let s = 1; s <= tableSeats(id); s++) if (assignments[`${id}-${s}`]) n++;
     return n;
 }
 
@@ -845,12 +849,16 @@ function executeMoveTable() {
     if (!destId) return;
     if (!TABLE_LAYOUT.find(t => t.id === destId)) { alert(`テーブル${destId}は存在しません`); return; }
     if (destId === selectedTable) return;
-    for (let s = 1; s <= SEATS_PER_TABLE; s++) {
+    const srcSeats = tableSeats(selectedTable), dstSeats = tableSeats(destId);
+    for (let s = 1; s <= srcSeats; s++) {
         const src = `${selectedTable}-${s}`, dst = `${destId}-${s}`;
-        if (assignments[src]) { assignments[dst] = assignments[src]; grades[dst] = grades[src] || ''; }
-        else { delete assignments[dst]; delete grades[dst]; }
+        if (s <= dstSeats) {
+            if (assignments[src]) { assignments[dst] = assignments[src]; grades[dst] = grades[src] || ''; }
+            else { delete assignments[dst]; delete grades[dst]; }
+        }
         delete assignments[src]; delete grades[src];
     }
+    for (let s = srcSeats + 1; s <= dstSeats; s++) { delete assignments[`${destId}-${s}`]; delete grades[`${destId}-${s}`]; }
     saveData();
     renderPanel(destId);
     selectedTable = destId;
@@ -858,7 +866,9 @@ function executeMoveTable() {
 
 function shiftRow(row, dir) {
     if (!selectedTable) return;
-    const [start, end] = row === 'top' ? [1, 5] : [6, 10];
+    const tSeats = tableSeats(selectedTable);
+    const half = tSeats / 2;
+    const [start, end] = row === 'top' ? [1, half] : [half + 1, tSeats];
     if (dir === 'right') {
         for (let s = end; s > start; s--) {
             const prev = `${selectedTable}-${s - 1}`;
@@ -884,7 +894,7 @@ function shiftRow(row, dir) {
 
 function clearTable(id) {
     if (!confirm(`テーブル${id}の全割り当てをクリアしますか？`)) return;
-    for (let s = 1; s <= SEATS_PER_TABLE; s++) {
+    for (let s = 1; s <= tableSeats(id); s++) {
         delete assignments[`${id}-${s}`];
         delete grades[`${id}-${s}`];
     }
@@ -971,7 +981,7 @@ function parseBulkLine(line) {
     } else return null;
     const [tbl, seatStr] = seatId.split('-');
     const seat = parseInt(seatStr);
-    if (!TABLE_LAYOUT.find(t => t.id === tbl) || seat < 1 || seat > SEATS_PER_TABLE) return null;
+    if (!TABLE_LAYOUT.find(t => t.id === tbl) || seat < 1 || seat > tableSeats(tbl)) return null;
     return { seatId, name, grade };
 }
 
@@ -1031,7 +1041,7 @@ function runAutoAssign() {
     // find all empty seats in order
     const emptySeats = [];
     TABLE_LAYOUT.forEach(t => {
-        for (let s = 1; s <= SEATS_PER_TABLE; s++) {
+        for (let s = 1; s <= tableSeats(t.id); s++) {
             const id = `${t.id}-${s}`;
             if (!assignments[id]) emptySeats.push(id);
         }
@@ -1074,7 +1084,7 @@ function buildListData() {
     listData = [];
     TABLE_LAYOUT.forEach(t => {
         const filled = countFilled(t.id);
-        for (let s = 1; s <= SEATS_PER_TABLE; s++) {
+        for (let s = 1; s <= tableSeats(t.id); s++) {
             const seatId = `${t.id}-${s}`;
             listData.push({
                 table: t.id, seat: s, seatId,
@@ -1103,14 +1113,14 @@ function filterList() {
 
     const tbody = document.getElementById('listBody');
     tbody.innerHTML = rows.map(r => {
-        const badge = r.filled === SEATS_PER_TABLE ? 'full' : r.filled > 0 ? 'partial' : 'empty';
+        const badge = r.filled === tableSeats(r.table) ? 'full' : r.filled > 0 ? 'partial' : 'empty';
         return `<tr>
             <td>テーブル <strong>${r.table}</strong>${r.prov ? ' ⚠️' : ''}</td>
             <td>${r.seat}番</td>
             <td style="color:#999;font-size:12px">${r.seatId}</td>
             <td class="${r.name ? '' : 'empty-seat'}">${r.name ? escHtml(r.name) : '（空席）'}</td>
             <td style="color:#7986cb;font-size:11px">${r.grade ? escHtml(r.grade) : ''}</td>
-            <td><span class="badge badge-${badge}">${r.filled}/${SEATS_PER_TABLE}</span></td>
+            <td><span class="badge badge-${badge}">${r.filled}/${tableSeats(r.table)}</span></td>
         </tr>`;
     }).join('');
 }
@@ -1141,7 +1151,7 @@ function parseRows(rows) {
             const seat  = parseInt(parts[1]);
             const name  = parts[3];
             const grade = parts[4] || null;
-            if (TABLE_LAYOUT.find(t => t.id === tbl) && seat >= 1 && seat <= SEATS_PER_TABLE && name) {
+            if (TABLE_LAYOUT.find(t => t.id === tbl) && seat >= 1 && seat <= tableSeats(tbl.toUpperCase()) && name) {
                 assignments[`${tbl}-${seat}`] = name;
                 if (grade) grades[`${tbl}-${seat}`] = grade;
                 count++;
@@ -1152,7 +1162,7 @@ function parseRows(rows) {
             const seat = parseInt(seatStr);
             const name = parts[1];
             const grade = parts[2] || null;
-            if (TABLE_LAYOUT.find(t => t.id === tbl.toUpperCase()) && seat >= 1 && seat <= SEATS_PER_TABLE && name) {
+            if (TABLE_LAYOUT.find(t => t.id === tbl.toUpperCase()) && seat >= 1 && seat <= tableSeats(tbl.toUpperCase()) && name) {
                 assignments[`${tbl.toUpperCase()}-${seat}`] = name;
                 if (grade) grades[`${tbl.toUpperCase()}-${seat}`] = grade;
                 count++;
@@ -1162,7 +1172,7 @@ function parseRows(rows) {
             const tbl  = parts[0].toUpperCase();
             const seat = parseInt(parts[1]);
             const name = parts[2];
-            if (TABLE_LAYOUT.find(t => t.id === tbl) && seat >= 1 && seat <= SEATS_PER_TABLE && name) {
+            if (TABLE_LAYOUT.find(t => t.id === tbl) && seat >= 1 && seat <= tableSeats(tbl.toUpperCase()) && name) {
                 assignments[`${tbl}-${seat}`] = name;
                 count++;
             }
@@ -1171,7 +1181,7 @@ function parseRows(rows) {
             const [tbl, seatStr] = parts[0].split('-');
             const seat = parseInt(seatStr);
             const name = parts[1];
-            if (TABLE_LAYOUT.find(t => t.id === tbl.toUpperCase()) && seat >= 1 && seat <= SEATS_PER_TABLE && name) {
+            if (TABLE_LAYOUT.find(t => t.id === tbl.toUpperCase()) && seat >= 1 && seat <= tableSeats(tbl.toUpperCase()) && name) {
                 assignments[`${tbl.toUpperCase()}-${seat}`] = name;
                 count++;
             }
@@ -1224,7 +1234,7 @@ function handleXlsxFile(file, e) {
 function downloadTemplate() {
     const rows = ['席ID,お名前,期生'];
     TABLE_LAYOUT.forEach(t => {
-        for (let s = 1; s <= SEATS_PER_TABLE; s++) {
+        for (let s = 1; s <= tableSeats(t.id); s++) {
             rows.push(`${t.id}-${s},,`);
         }
     });
@@ -1238,7 +1248,7 @@ function downloadTemplate() {
 function exportCSV() {
     const rows = ['テーブル,席番号,席ID,お名前,期生'];
     TABLE_LAYOUT.forEach(t => {
-        for (let s = 1; s <= SEATS_PER_TABLE; s++) {
+        for (let s = 1; s <= tableSeats(t.id); s++) {
             const seatId = `${t.id}-${s}`;
             rows.push(`${t.id},${s},${seatId},${assignments[seatId] || ''},${grades[seatId] || ''}`);
         }
@@ -1257,7 +1267,7 @@ function exportForCanva() {
     // Format: seat_id, table_label, seat_number, name — for Canva Bulk Create
     const rows = ['seat_id,table_name,seat_number,name'];
     TABLE_LAYOUT.forEach(t => {
-        for (let s = 1; s <= SEATS_PER_TABLE; s++) {
+        for (let s = 1; s <= tableSeats(t.id); s++) {
             const seatId = `${t.id}-${s}`;
             const name   = assignments[seatId] || '';
             if (name) {
@@ -1316,11 +1326,13 @@ function buildNameMapGrid() {
         card.style.gridColumn = t.col + 1;
         card.style.gridRow = t.row + 1;
         const filled = countFilled(t.id);
+        const tSeats = tableSeats(t.id);
+        const half = tSeats / 2;
 
-        // Top row: seats 1-5
+        // Top row: seats 1 to half
         const topRow = document.createElement('div');
         topRow.className = 'nc-seat-row nc-top';
-        for (let s = 1; s <= 5; s++) {
+        for (let s = 1; s <= half; s++) {
             const sid = `${t.id}-${s}`;
             const name = assignments[sid] || '';
             const grade = grades[sid] || '';
@@ -1336,13 +1348,13 @@ function buildNameMapGrid() {
         // Table label bar
         const bar = document.createElement('div');
         bar.className = 'nc-table-bar';
-        bar.innerHTML = `<span>テーブル ${t.id}</span><span class="nc-fill">${filled}/10</span>`;
+        bar.innerHTML = `<span>テーブル ${t.id}</span><span class="nc-fill">${filled}/${tSeats}</span>`;
         card.appendChild(bar);
 
-        // Bottom row: seats 6-10
+        // Bottom row: seats half+1 to tSeats
         const botRow = document.createElement('div');
         botRow.className = 'nc-seat-row nc-bot';
-        for (let s = 6; s <= 10; s++) {
+        for (let s = half + 1; s <= tSeats; s++) {
             const sid = `${t.id}-${s}`;
             const name = assignments[sid] || '';
             const grade = grades[sid] || '';
