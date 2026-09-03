@@ -1,0 +1,808 @@
+<title>ラポール形成 壁打ちまとめ</title>
+<style>
+  :root {
+    --bg: #F4F7FB;
+    --surface: #FFFFFF;
+    --surface-2: #EEF4FB;
+    --ink: #1A2D3E;
+    --ink-2: #4A6278;
+    --ink-muted: #7A96AC;
+    --border: #D0DCEA;
+    --accent: #2D6A8F;
+    --accent-light: #5B9FC2;
+    --accent-bg: #EBF4FA;
+    --amber: #C8762A;
+    --amber-bg: #FDF3E7;
+    --amber-border: #EDD4A8;
+    --teal: #3A7D70;
+    --teal-bg: #E6F4F1;
+    --teal-border: #B0D8D0;
+    --purple: #6B4E9B;
+    --purple-bg: #F0EBF8;
+    --purple-border: #C8B8E8;
+    --red: #C04040;
+    --red-bg: #FDEAEA;
+    --green: #3A7D50;
+    --green-bg: #E6F4EC;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0E1D2C; --surface: #182F44; --surface-2: #1E3A50;
+      --ink: #D8E8F2; --ink-2: #91B4CC; --ink-muted: #5A7D94; --border: #243B52;
+      --accent: #5BA3C9; --accent-light: #7EC0DE; --accent-bg: #162840;
+      --amber: #E09050; --amber-bg: #2A1F10; --amber-border: #5A3A18;
+      --teal: #5BB0A2; --teal-bg: #112820; --teal-border: #1E5048;
+      --purple: #9B7EC8; --purple-bg: #1E1530; --purple-border: #3D2860;
+      --red: #E07070; --red-bg: #2A1010;
+      --green: #70C090; --green-bg: #0E2018;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0E1D2C; --surface: #182F44; --surface-2: #1E3A50;
+    --ink: #D8E8F2; --ink-2: #91B4CC; --ink-muted: #5A7D94; --border: #243B52;
+    --accent: #5BA3C9; --accent-light: #7EC0DE; --accent-bg: #162840;
+    --amber: #E09050; --amber-bg: #2A1F10; --amber-border: #5A3A18;
+    --teal: #5BB0A2; --teal-bg: #112820; --teal-border: #1E5048;
+    --purple: #9B7EC8; --purple-bg: #1E1530; --purple-border: #3D2860;
+    --red: #E07070; --red-bg: #2A1010;
+    --green: #70C090; --green-bg: #0E2018;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'IPAPGothic','IPAGothic','Hiragino Kaku Gothic Pro','Yu Gothic','Meiryo',sans-serif;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    user-select: none;
+  }
+
+  /* ── Deck shell ── */
+  .deck {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 48px 64px;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(40px);
+    transition: opacity .28s ease, transform .28s ease;
+  }
+  .slide.active {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(0);
+  }
+  .slide.prev {
+    opacity: 0;
+    transform: translateX(-40px);
+  }
+
+  /* ── Nav bar ── */
+  .nav-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 40px;
+    border-top: 1px solid var(--border);
+    background: var(--surface);
+    flex-shrink: 0;
+  }
+  .nav-counter {
+    font-size: 12px;
+    color: var(--ink-muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .nav-dots {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+  .nav-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--border);
+    cursor: pointer;
+    transition: background .2s, transform .2s;
+  }
+  .nav-dot.active { background: var(--accent); transform: scale(1.3); }
+  .nav-btns {
+    display: flex;
+    gap: 8px;
+  }
+  .nav-btn {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    width: 34px; height: 34px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    color: var(--ink-2);
+    font-size: 15px;
+    transition: background .15s, color .15s;
+  }
+  .nav-btn:hover { background: var(--accent-bg); color: var(--accent); }
+  .nav-btn:disabled { opacity: .35; cursor: default; }
+
+  /* ── Slide eyebrow ── */
+  .eyebrow {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    margin-bottom: 10px;
+  }
+  .eyebrow.blue { color: var(--accent); }
+  .eyebrow.amber { color: var(--amber); }
+  .eyebrow.teal { color: var(--teal); }
+  .eyebrow.purple { color: var(--purple); }
+  .eyebrow.red { color: var(--red); }
+  .eyebrow.green { color: var(--green); }
+
+  .slide-title {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.3;
+    text-wrap: balance;
+    margin-bottom: 28px;
+  }
+
+  /* ── Title slide ── */
+  .slide-cover {
+    justify-content: center;
+    background: var(--surface);
+  }
+  .cover-tag {
+    display: inline-block;
+    background: var(--accent-bg);
+    color: var(--accent);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .1em;
+    padding: 5px 12px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+  }
+  .cover-title {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.3;
+    margin-bottom: 16px;
+    text-wrap: balance;
+  }
+  .cover-sub {
+    font-size: 14px;
+    color: var(--ink-2);
+    line-height: 1.7;
+    margin-bottom: 32px;
+    max-width: 560px;
+  }
+  .cover-meta {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .cover-meta-item {
+    font-size: 12px;
+    color: var(--ink-muted);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .cover-bar {
+    width: 48px;
+    height: 4px;
+    background: var(--accent);
+    border-radius: 2px;
+    margin-bottom: 24px;
+  }
+
+  /* ── Flow ── */
+  .flow-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 14px;
+  }
+  .flow-box {
+    flex: 1;
+    min-width: 110px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+    text-align: center;
+  }
+  .flow-box.accent { background: var(--accent-bg); border-color: var(--accent); color: var(--accent); }
+  .flow-box.amber { background: var(--amber-bg); border-color: var(--amber-border); color: var(--amber); }
+  .flow-box.red { background: var(--red-bg); border-color: var(--red); color: var(--red); }
+  .flow-box.green { background: var(--green-bg); border-color: var(--green); color: var(--green); }
+  .flow-arrow { font-size: 18px; color: var(--ink-muted); flex-shrink: 0; }
+
+  /* ── Grid layouts ── */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; flex: 1; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; flex: 1; }
+
+  /* ── Cards ── */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+    display: flex;
+    flex-direction: column;
+  }
+  .card-head {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .dot-red { background: var(--red); }
+  .dot-amber { background: var(--amber); }
+  .dot-purple { background: var(--purple); }
+  .dot-accent { background: var(--accent); }
+  .dot-teal { background: var(--teal); }
+
+  .item {
+    font-size: 12px;
+    color: var(--ink-2);
+    line-height: 1.6;
+    padding: 3px 0;
+    border-bottom: 1px solid var(--bg, #F4F7FB);
+    display: flex;
+    gap: 6px;
+  }
+  .item::before { content: '→'; color: var(--ink-muted); flex-shrink: 0; }
+  .item:last-child { border-bottom: none; }
+
+  /* ── Type grid ── */
+  .type-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    flex: 1;
+  }
+  .type-cell {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+  }
+  .type-cell.notion { background: var(--accent-bg); border-color: var(--accent); }
+  .type-cell-name { font-size: 12.5px; font-weight: 600; color: var(--ink); margin-bottom: 3px; }
+  .type-cell.notion .type-cell-name { color: var(--accent); }
+  .type-cell-desc { font-size: 10.5px; color: var(--ink-muted); line-height: 1.4; }
+
+  /* ── Level cards ── */
+  .level-row { display: flex; gap: 12px; margin-bottom: 16px; }
+  .level-card { flex: 1; border-radius: 10px; padding: 14px 16px; border: 1px solid var(--border); }
+  .level-card.lv1 { background: var(--red-bg); border-color: var(--red); }
+  .level-card.lv2 { background: var(--amber-bg); border-color: var(--amber); }
+  .level-card.lv3 { background: var(--green-bg); border-color: var(--green); }
+  .level-lbl { font-size: 9px; font-weight: 700; letter-spacing: .1em; margin-bottom: 3px; }
+  .lv1 .level-lbl { color: var(--red); }
+  .lv2 .level-lbl { color: var(--amber); }
+  .lv3 .level-lbl { color: var(--green); }
+  .level-name { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 5px; }
+  .level-desc { font-size: 11.5px; color: var(--ink-2); line-height: 1.5; }
+
+  /* ── Axis tags ── */
+  .axis-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+  .axis-tag {
+    background: var(--amber-bg);
+    border: 1px solid var(--amber-border);
+    color: var(--amber);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  /* ── Status table ── */
+  .st-table { width: 100%; border-collapse: collapse; background: var(--surface); border-radius: 10px; overflow: hidden; border: 1px solid var(--border); }
+  .st-table th { background: var(--surface-2); padding: 8px 12px; text-align: left; font-size: 10.5px; font-weight: 700; color: var(--ink-muted); border-bottom: 1px solid var(--border); }
+  .st-table td { padding: 9px 12px; border-bottom: 1px solid var(--surface-2); font-size: 12px; vertical-align: top; }
+  .st-table tr:last-child td { border-bottom: none; }
+  .td-main { font-weight: 600; color: var(--ink); }
+  .td-sub { font-size: 10.5px; color: var(--ink-muted); line-height: 1.45; margin-top: 2px; }
+  .badge { display: inline-block; padding: 2px 9px; border-radius: 20px; font-size: 10px; font-weight: 700; white-space: nowrap; }
+  .badge-done { background: var(--green-bg); color: var(--green); }
+  .badge-wip { background: var(--accent-bg); color: var(--accent); }
+  .badge-todo { background: var(--surface-2); color: var(--ink-muted); }
+
+  /* ── Conf cards ── */
+  .conf-card { flex: 1; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; }
+  .conf-head { padding: 11px 16px; font-size: 13px; font-weight: 700; }
+  .conf-head.p1 { background: var(--accent-bg); color: var(--accent); }
+  .conf-head.p2 { background: var(--teal-bg); color: var(--teal); }
+  .conf-body { padding: 14px 16px; background: var(--surface); flex: 1; }
+  .conf-row { margin-bottom: 10px; }
+  .conf-lbl { font-size: 10px; font-weight: 700; color: var(--ink-muted); letter-spacing: .06em; margin-bottom: 3px; }
+  .conf-val { font-size: 12px; color: var(--ink); line-height: 1.6; }
+  .conf-steps { display: flex; flex-direction: column; gap: 6px; }
+  .conf-step { display: flex; gap: 8px; font-size: 12px; color: var(--ink-2); align-items: flex-start; }
+  .step-num { width: 20px; height: 20px; border-radius: 50%; font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; background: var(--surface-2); color: var(--ink-muted); }
+  .p2 .step-num { background: var(--teal-bg); color: var(--teal); }
+
+  /* ── Todo ── */
+  .todo-item { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 11px 14px; display: flex; gap: 12px; align-items: flex-start; margin-bottom: 8px; }
+  .todo-icon { width: 26px; height: 26px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
+  .ti-purple { background: var(--purple-bg); }
+  .ti-teal { background: var(--teal-bg); }
+  .ti-amber { background: var(--amber-bg); }
+  .ti-accent { background: var(--accent-bg); }
+  .todo-title { font-size: 12.5px; font-weight: 600; color: var(--ink); margin-bottom: 2px; }
+  .todo-desc { font-size: 11px; color: var(--ink-muted); line-height: 1.5; }
+
+  /* ── Philosophy ── */
+  .phil-box {
+    background: var(--surface-2);
+    border-left: 4px solid var(--accent);
+    border-radius: 0 10px 10px 0;
+    padding: 20px 24px;
+    margin-bottom: 20px;
+  }
+  .phil-main { font-size: 18px; font-weight: 700; color: var(--ink); margin-bottom: 8px; line-height: 1.4; }
+  .phil-sub { font-size: 13px; color: var(--ink-2); line-height: 1.7; }
+
+  .role-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  .role-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; }
+  .role-head { font-size: 12px; font-weight: 700; color: var(--ink); margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+  .role-desc { font-size: 11.5px; color: var(--ink-2); line-height: 1.6; }
+
+  .note { font-size: 11px; color: var(--ink-muted); margin-top: 8px; line-height: 1.5; }
+  .highlight { background: var(--amber-bg); border: 1px solid var(--amber-border); border-radius: 8px; padding: 12px 16px; font-size: 13px; font-weight: 700; color: var(--ink); line-height: 1.6; margin-bottom: 14px; }
+
+  @media (max-width: 720px) {
+    .slide { padding: 28px 24px; }
+    .grid-2 { grid-template-columns: 1fr; }
+    .grid-3 { grid-template-columns: 1fr; }
+    .type-grid { grid-template-columns: repeat(2, 1fr); }
+    .role-grid { grid-template-columns: 1fr; }
+    .level-row { flex-direction: column; }
+    .conf-card { margin-bottom: 10px; }
+    .slide-title { font-size: 20px; }
+    .cover-title { font-size: 24px; }
+  }
+</style>
+
+<div class="deck" id="deck">
+
+  <!-- ── Slide 0: Cover ── -->
+  <div class="slide slide-cover active" data-index="0">
+    <div>
+      <div class="cover-tag">Dメンターチーム 壁打ちまとめ</div>
+      <div class="cover-bar"></div>
+      <div class="cover-title">ラポール形成<br>課題・試作・改善の全体整理</div>
+      <div class="cover-sub">9月テーマ「受講生の世界に下りていく力」へ向けて、これまで壁打ちしてきた内容を整理したスライドデック。</div>
+      <div class="cover-meta">
+        <span class="cover-meta-item">📅 2026年9月</span>
+        <span class="cover-meta-item">📌 9/4カンファレンス準備中</span>
+        <span class="cover-meta-item">👤 Dメンターチームリーダー</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Slide 1: Why ── -->
+  <div class="slide" data-index="1">
+    <div class="eyebrow blue">Background</div>
+    <div class="slide-title">なぜ今ラポールが焦点なのか</div>
+
+    <div style="margin-bottom:10px;font-size:13px;font-weight:700;color:var(--ink-2);">ラポールがある場合</div>
+    <div class="flow-row">
+      <div class="flow-box accent">ラポールがある</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box">受講生が本音を話す</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box">ボトルネックが見える</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box green">深掘り・設計ができる</div>
+    </div>
+
+    <div style="margin-bottom:10px;margin-top:8px;font-size:13px;font-weight:700;color:var(--ink-2);">ラポールがない場合</div>
+    <div class="flow-row">
+      <div class="flow-box red">ラポールがない</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box">受講生が開示しない</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box">表面しか見えない</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box red">的外れな介入になる</div>
+    </div>
+
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin-top:16px;">
+      <div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:6px;">10月への接続</div>
+      <div style="font-size:13px;color:var(--ink);line-height:1.7;">10月のボトルネック特定フェーズは、9月のラポール力で精度が決まる。<br>だからこそ9月がラポール集中月になっている。</div>
+    </div>
+  </div>
+
+  <!-- ── Slide 2: Challenges ── -->
+  <div class="slide" data-index="2">
+    <div class="eyebrow amber">Challenges</div>
+    <div class="slide-title">課題の全体像</div>
+
+    <div class="highlight">核心：「ラポールを築けばいい」と頭では分かっていても、受講生役を経験しないと「どう感じるか」が身体に入らない。</div>
+
+    <div class="grid-3" style="flex:0;gap:12px;">
+      <div class="card">
+        <div class="card-head"><span class="dot dot-red"></span>意識レベル</div>
+        <div class="item">「聞いているつもり」になりやすい</div>
+        <div class="item">解決に先走り、受け止め切る前に進む</div>
+        <div class="item">テンポが速いと受講生が威圧感を感じる</div>
+        <div class="item">滞在時間が短く浅いまま次に進む</div>
+      </div>
+      <div class="card">
+        <div class="card-head"><span class="dot dot-amber"></span>スキルレベル</div>
+        <div class="item">12タイプへの引き出しに偏りがある</div>
+        <div class="item">難しい背景設定での対応力が低い</div>
+        <div class="item">振り返りの質にバラつきがある</div>
+        <div class="item">自己開示を引き出す言葉の選び方が不安定</div>
+      </div>
+      <div class="card">
+        <div class="card-head"><span class="dot dot-purple"></span>構造レベル</div>
+        <div class="item">ナレッジが個人に止まり蓄積されない</div>
+        <div class="item">ラポール3段階の自己認識がバラバラ</div>
+        <div class="item">ロープレが「こなす」になりがち</div>
+        <div class="item">タイプ×背景の組み合わせが未体系化</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Slide 3: 12タイプ ── -->
+  <div class="slide" data-index="3">
+    <div class="eyebrow teal">Framework 1/2</div>
+    <div class="slide-title">12タイプ分類（受講生のパターン）</div>
+
+    <div class="type-grid">
+      <div class="type-cell notion">
+        <div class="type-cell-name">完璧主義</div>
+        <div class="type-cell-desc">できない自分を認められない</div>
+      </div>
+      <div class="type-cell notion">
+        <div class="type-cell-name">比較思考</div>
+        <div class="type-cell-desc">他者と比べて自分を測る</div>
+      </div>
+      <div class="type-cell notion">
+        <div class="type-cell-name">低自己評価</div>
+        <div class="type-cell-desc">自分の可能性を信じられない</div>
+      </div>
+      <div class="type-cell notion">
+        <div class="type-cell-name">未来不安</div>
+        <div class="type-cell-desc">先のことが怖くて動けない</div>
+      </div>
+      <div class="type-cell">
+        <div class="type-cell-name">過去思考</div>
+        <div class="type-cell-desc">過去の失敗に引きずられる</div>
+      </div>
+      <div class="type-cell">
+        <div class="type-cell-name">正解待ち</div>
+        <div class="type-cell-desc">答えを外に求め続ける</div>
+      </div>
+      <div class="type-cell">
+        <div class="type-cell-name">自己価値=成果</div>
+        <div class="type-cell-desc">結果が出ないと価値がない</div>
+      </div>
+      <div class="type-cell">
+        <div class="type-cell-name">安全欲求強め</div>
+        <div class="type-cell-desc">変化を極端に恐れる</div>
+      </div>
+      <div class="type-cell">
+        <div class="type-cell-name">行動先行</div>
+        <div class="type-cell-desc">考えずに動いてしまう</div>
+      </div>
+      <div class="type-cell">
+        <div class="type-cell-name">思考過多</div>
+        <div class="type-cell-desc">考えすぎて動けない</div>
+      </div>
+      <div class="type-cell">
+        <div class="type-cell-name">環境依存</div>
+        <div class="type-cell-desc">環境を変えれば解決と思う</div>
+      </div>
+      <div class="type-cell">
+        <div class="type-cell-name">自己流固執</div>
+        <div class="type-cell-desc">自分のやり方を変えたくない</div>
+      </div>
+    </div>
+    <p class="note" style="color:var(--accent);">🔵 背景色のタイプはNotionページ作成済み。各ページにYouTubeリンクテーブルを設置。</p>
+  </div>
+
+  <!-- ── Slide 4: 背景軸 + 3段階 ── -->
+  <div class="slide" data-index="4">
+    <div class="eyebrow teal">Framework 2/2</div>
+    <div class="slide-title">4つの背景軸 ＋ ラポール3段階</div>
+
+    <div style="margin-bottom:20px;">
+      <div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:10px;">4つの背景軸（12タイプとは別次元）</div>
+      <div class="axis-row">
+        <span class="axis-tag">年上・経験豊富</span>
+        <span class="axis-tag">育児中・時間制約あり</span>
+        <span class="axis-tag">メンタル不安が強い</span>
+        <span class="axis-tag">超絶忙しい</span>
+      </div>
+      <p class="note">タイプ×背景の組み合わせでアプローチが変わる。同じ「完璧主義」でも「育児中」と「年上」では関わり方が異なる。</p>
+    </div>
+
+    <div>
+      <div style="font-size:13px;font-weight:700;color:var(--ink);margin-bottom:12px;">ラポール3段階</div>
+      <div class="level-row">
+        <div class="level-card lv1">
+          <div class="level-lbl">LEVEL 1</div>
+          <div class="level-name">まだ浅い</div>
+          <div class="level-desc">表面的なやり取りのみ。受講生が本音を話していない状態。</div>
+        </div>
+        <div class="level-card lv2">
+          <div class="level-lbl">LEVEL 2</div>
+          <div class="level-name">築けてきている</div>
+          <div class="level-desc">少し打ち解けてきた。ただし深い自己開示にはまだ至っていない。</div>
+        </div>
+        <div class="level-card lv3">
+          <div class="level-lbl">LEVEL 3</div>
+          <div class="level-name">築けている</div>
+          <div class="level-desc">受講生が本音や不安を自然に話せる。ここで初めて深掘りが機能する。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Slide 5: 施策 ── -->
+  <div class="slide" data-index="5">
+    <div class="eyebrow purple">Initiatives</div>
+    <div class="slide-title">これまでの試作・施策</div>
+
+    <div style="overflow-x:auto;flex:1;">
+      <table class="st-table">
+        <thead>
+          <tr>
+            <th>施策</th>
+            <th>時期</th>
+            <th>内容・成果</th>
+            <th style="width:80px;">ステータス</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><div class="td-main">12タイプ・背景軸・3段階の整理</div><div class="td-sub">枠組みの言語化と定義</div></td>
+            <td style="font-size:11px;color:var(--ink-muted);">〜8月</td>
+            <td style="font-size:11.5px;color:var(--ink-2);">メンターが受講生を見立てる共通言語ができた</td>
+            <td><span class="badge badge-done">完了</span></td>
+          </tr>
+          <tr>
+            <td><div class="td-main">ラポール引き出し集 Excel</div><div class="td-sub">全15シート、タイプ別詳細</div></td>
+            <td style="font-size:11px;color:var(--ink-muted);">8月</td>
+            <td style="font-size:11.5px;color:var(--ink-2);">タイプ別の特徴・アプローチ・注意点を一覧化</td>
+            <td><span class="badge badge-done">完了</span></td>
+          </tr>
+          <tr>
+            <td><div class="td-main">8/25 ロープレセッション</div><div class="td-sub">3役（メンター/受講生/オブザーバー）</div></td>
+            <td style="font-size:11px;color:var(--ink-muted);">8/25</td>
+            <td style="font-size:11.5px;color:var(--ink-2);">「先走り」「滞在時間の短さ」が主課題として浮上</td>
+            <td><span class="badge badge-done">完了</span></td>
+          </tr>
+          <tr>
+            <td><div class="td-main">rapport-v2.html</div><div class="td-sub">育成現状・課題・方針まとめ</div></td>
+            <td style="font-size:11px;color:var(--ink-muted);">8月</td>
+            <td style="font-size:11.5px;color:var(--ink-2);">育成の全体方針を1ドキュメントに整理</td>
+            <td><span class="badge badge-done">完了</span></td>
+          </tr>
+          <tr>
+            <td><div class="td-main">Notion ラポール引き出し集</div><div class="td-sub">タイプ別階層ページ（4タイプ作成済み）</div></td>
+            <td style="font-size:11px;color:var(--ink-muted);">9月〜</td>
+            <td style="font-size:11.5px;color:var(--ink-2);">YouTubeリンクテーブル設置。残り8タイプは順次追加</td>
+            <td><span class="badge badge-wip">進行中</span></td>
+          </tr>
+          <tr>
+            <td><div class="td-main">9/4カンファレンス ＋ Part2ワークシート</div><div class="td-sub">"See Deeper" 2部構成</div></td>
+            <td style="font-size:11px;color:var(--ink-muted);">9/4</td>
+            <td style="font-size:11.5px;color:var(--ink-2);">設計完了。Part2説明資料・動画選定が残タスク</td>
+            <td><span class="badge badge-wip">準備中</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── Slide 6: カンファレンス ── -->
+  <div class="slide" data-index="6">
+    <div class="eyebrow blue">Conference 9/4</div>
+    <div class="slide-title">9/4カンファレンス — "See Deeper"</div>
+
+    <div style="display:flex;gap:14px;flex:1;">
+      <div class="conf-card">
+        <div class="conf-head p1">Part 1｜自分のパターンに気づく</div>
+        <div class="conf-body">
+          <div class="conf-row">
+            <div class="conf-lbl">目的</div>
+            <div class="conf-val">自分のメンタリングの癖・パターンへの気づきを得る</div>
+          </div>
+          <div class="conf-row">
+            <div class="conf-lbl">ゴール</div>
+            <div class="conf-val">「どこで先走っているか」「どこで滞在できているか」を言語化できる状態</div>
+          </div>
+          <div class="conf-row">
+            <div class="conf-lbl">やること</div>
+            <div class="conf-steps">
+              <div class="conf-step"><div class="step-num">1</div><div>担当受講生の動画を振り返る</div></div>
+              <div class="conf-step"><div class="step-num">2</div><div>「受け止め切れたか」「先走った場面」を特定</div></div>
+              <div class="conf-step"><div class="step-num">3</div><div>メンター同士でシェアして気づきを広げる</div></div>
+            </div>
+          </div>
+          <div class="conf-row" style="margin-top:10px;">
+            <div class="conf-lbl">メンターへの意識づけ</div>
+            <div class="conf-val" style="font-size:11px;">「うまくできた」の評価ではなく「何が起きていたか」を見る姿勢で</div>
+          </div>
+        </div>
+      </div>
+      <div class="conf-card">
+        <div class="conf-head p2">Part 2｜なぜラポールが必要かを理解する</div>
+        <div class="conf-body">
+          <div class="conf-row">
+            <div class="conf-lbl">目的</div>
+            <div class="conf-val">6ヶ月全体像を見た上で、1ヶ月目のラポールの重要性を構造として理解する</div>
+          </div>
+          <div class="conf-row">
+            <div class="conf-lbl">ゴール</div>
+            <div class="conf-val">「1ヶ月目5回をどう設計するか」を担当受講生で考えられる状態</div>
+          </div>
+          <div class="conf-row">
+            <div class="conf-lbl">やること</div>
+            <div class="conf-steps p2">
+              <div class="conf-step"><div class="step-num">1</div><div>6ヶ月ロードマップを説明（資料で共有）</div></div>
+              <div class="conf-step"><div class="step-num">2</div><div>受講生の今の状態を考える</div></div>
+              <div class="conf-step"><div class="step-num">3</div><div>動画2〜3本を見てもう一歩深く分析</div></div>
+              <div class="conf-step"><div class="step-num">4</div><div>自分への問いを言語化</div></div>
+            </div>
+          </div>
+          <div style="font-size:11px;color:var(--ink-muted);margin-top:8px;line-height:1.5;">受講生は1ヶ月終了済み・6ヶ月は未終了。だから6ヶ月の全体を見せることで「なぜ今ラポールなのか」が腑に落ちる。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Slide 7: 残タスク ── -->
+  <div class="slide" data-index="7">
+    <div class="eyebrow teal">In Progress / Next</div>
+    <div class="slide-title">今改善中・これからやること</div>
+
+    <div style="flex:1;overflow:auto;">
+      <div class="todo-item">
+        <div class="todo-icon ti-purple">📝</div>
+        <div>
+          <div class="todo-title">Notion 引き出し集の整備続行</div>
+          <div class="todo-desc">残り8タイプのページ作成。各ページにYouTubeリンクテーブルを追加し、チームで動画を蓄積できる構造へ。</div>
+        </div>
+      </div>
+      <div class="todo-item">
+        <div class="todo-icon ti-teal">📊</div>
+        <div>
+          <div class="todo-title">Part2 説明資料（スライド）の作成</div>
+          <div class="todo-desc">6ヶ月ロードマップを見せて「なぜ1ヶ月目のラポールが重要か」を伝える資料。カンファレンスで直接説明する場面で使う。</div>
+        </div>
+      </div>
+      <div class="todo-item">
+        <div class="todo-icon ti-amber">📋</div>
+        <div>
+          <div class="todo-title">Part2 ワークシートの最終調整</div>
+          <div class="todo-desc">実際のフロー（6ヶ月説明→受講生状態→動画分析→自己への問い）に合わせた構成に更新する。</div>
+        </div>
+      </div>
+      <div class="todo-item">
+        <div class="todo-icon ti-accent">🎥</div>
+        <div>
+          <div class="todo-title">カンファレンス用 動画の選定</div>
+          <div class="todo-desc">Part2で分析に使う受講生動画の抜粋。タイプの特徴が見えやすい場面を2〜3本選ぶ。</div>
+        </div>
+      </div>
+      <div class="todo-item">
+        <div class="todo-icon ti-purple">📅</div>
+        <div>
+          <div class="todo-title">9月後半 勉強会の設計</div>
+          <div class="todo-desc">マイロードマップの見方×ラポールへの活用。ロープレ体験が積み上がった後のタイミングで実施。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Slide 8: Philosophy ── -->
+  <div class="slide" data-index="8">
+    <div class="eyebrow blue">Philosophy</div>
+    <div class="slide-title">育成の根っこにあること</div>
+
+    <div class="phil-box">
+      <div class="phil-main">正しい答えを覚えるより、正しく"気づける目"を育てる</div>
+      <div class="phil-sub">体験なしに指標を渡すと「チェックリスト思考」になりかねない。<br>体験が積み上がってから指標を出すことで、言葉と実体験が結びつく。<br>だから9月は指標より先に「体感」を積む。</div>
+    </div>
+
+    <div class="role-grid">
+      <div class="role-card">
+        <div class="role-head"><span>🎯</span> メンター役</div>
+        <div class="role-desc">実践力を育てる場。「どこで先走ったか」「どこで滞在できたか」を自分の行動として確認する。</div>
+      </div>
+      <div class="role-card">
+        <div class="role-head"><span>👤</span> 受講生役</div>
+        <div class="role-desc">相手視点を身体感覚として獲得する場。「威圧感がある」「受け止めてもらえると話したくなる」を体で分かる。</div>
+      </div>
+      <div class="role-card">
+        <div class="role-head"><span>👁</span> オブザーバー役</div>
+        <div class="role-desc">観察力を育てる場。「表情が変わった瞬間」「言葉数が減ったタイミング」が見える。10月の深掘りに直結する。</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── Nav ── -->
+<div class="nav-bar">
+  <div class="nav-counter"><span id="cur">1</span> / <span id="tot">9</span></div>
+  <div class="nav-dots" id="dots"></div>
+  <div class="nav-btns">
+    <button class="nav-btn" id="prev" onclick="go(-1)">←</button>
+    <button class="nav-btn" id="next" onclick="go(1)">→</button>
+  </div>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let cur = 0;
+
+  const dotsEl = document.getElementById('dots');
+  slides.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'nav-dot' + (i === 0 ? ' active' : '');
+    d.onclick = () => goTo(i);
+    dotsEl.appendChild(d);
+  });
+
+  function goTo(n) {
+    const prev = slides[cur];
+    prev.classList.remove('active');
+    prev.classList.add('prev');
+    setTimeout(() => prev.classList.remove('prev'), 300);
+
+    cur = n;
+    slides[cur].classList.add('active');
+    document.querySelectorAll('.nav-dot').forEach((d, i) =>
+      d.classList.toggle('active', i === cur));
+    document.getElementById('cur').textContent = cur + 1;
+    document.getElementById('prev').disabled = cur === 0;
+    document.getElementById('next').disabled = cur === total - 1;
+  }
+
+  function go(dir) {
+    const n = cur + dir;
+    if (n >= 0 && n < total) goTo(n);
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') go(1);
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') go(-1);
+  });
+
+  document.getElementById('tot').textContent = total;
+  document.getElementById('prev').disabled = true;
+</script>
